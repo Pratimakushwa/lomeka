@@ -199,7 +199,7 @@ export default function About() {
               }`}
             >
               <img
-                src="/hero-closeup.png"
+                src="/img55.png"
                 alt="LOMEKA wholesale garment manufacturing collection"
                 className="h-full w-full object-cover object-top transition-transform duration-500 hover:scale-105"
               />

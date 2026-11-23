@@ -398,13 +398,27 @@ function CollapsibleGroup({ title, defaultOpen = true, children }) {
   );
 }
 
-function Filters({ filters, onChange, onClearAll, suffix }) {
+function Filters({ filters, onChange, onClearAll, suffix, onSearchSubmit }) {
+  const [draftQuery, setDraftQuery] = useState(filters.q);
+
+  useEffect(() => {
+    setDraftQuery(filters.q);
+  }, [filters.q]);
+
   function toggleFit(fit) {
     onChange({
       fits: filters.fits.includes(fit)
         ? filters.fits.filter((item) => item !== fit)
         : [...filters.fits, fit],
     });
+  }
+
+  function handleSearchKeyDown(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      onChange({ q: draftQuery });
+      onSearchSubmit?.();
+    }
   }
 
   return (
@@ -423,7 +437,10 @@ function Filters({ filters, onChange, onClearAll, suffix }) {
         <button
           type="button"
           className="lc-clear-all"
-          onClick={onClearAll}
+          onClick={() => {
+            setDraftQuery('');
+            onClearAll();
+          }}
         >
           CLEAR ALL
         </button>
@@ -433,9 +450,10 @@ function Filters({ filters, onChange, onClearAll, suffix }) {
         <input
           type="search"
           aria-label="Search styles"
-          placeholder="Search style, fit..."
-          value={filters.q}
-          onChange={(e) => onChange({ q: e.target.value })}
+          placeholder="Search collection, style... (Enter)"
+          value={draftQuery}
+          onChange={(e) => setDraftQuery(e.target.value)}
+          onKeyDown={handleSearchKeyDown}
           className="lc-search-input"
         />
       </div>
@@ -696,6 +714,7 @@ function ProductCard({ product, size, index }) {
 export default function Collections() {
   const [filters, setFilters] = useState(readFilters);
   const [apiProducts, setApiProducts] = useState([]);
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const resultsRef = useRef(null);
 
   useEffect(() => {
@@ -756,6 +775,15 @@ export default function Collections() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!mobileFilterOpen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [mobileFilterOpen]);
+
   function updateFilters(changes) {
     const next = { ...filters, page: 1, ...changes };
     const url = makeUrl(next);
@@ -776,6 +804,11 @@ export default function Collections() {
     });
   }
 
+  function handleMobileSearchSubmit() {
+    setMobileFilterOpen(false);
+    resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
   const allCatalog = [...apiProducts, ...staticProducts];
   const normalizedQuery = filters.q.trim().toLowerCase();
 
@@ -791,11 +824,20 @@ export default function Collections() {
       !filters.color ||
       product.color === filters.color ||
       product.variants.some((v) => v.id === filters.color);
+    const collectionText =
+      product.gender === 'men'
+        ? "men men's mens collection"
+        : "women women's womens collection";
+    const categoryText =
+      categories.find(([id]) => id === product.category)?.[1] || '';
+
     const matchesSearch =
       !normalizedQuery ||
       product.name.toLowerCase().includes(normalizedQuery) ||
       product.fit.toLowerCase().includes(normalizedQuery) ||
       product.category.toLowerCase().includes(normalizedQuery) ||
+      categoryText.toLowerCase().includes(normalizedQuery) ||
+      collectionText.includes(normalizedQuery) ||
       product.color.toLowerCase().includes(normalizedQuery) ||
       (product.gsm && product.gsm.toLowerCase().includes(normalizedQuery)) ||
       (product.fabric && product.fabric.toLowerCase().includes(normalizedQuery));
@@ -942,7 +984,8 @@ export default function Collections() {
           line-height: 1;
         }
 
-        .lc-sidebar h2 {
+        .lc-sidebar h2,
+        .lc-mobile-drawer h2 {
           margin: 0;
           font-size: 13px;
           font-weight: 800;
@@ -981,12 +1024,12 @@ export default function Collections() {
 
         .lc-search-input {
           width: 100%;
-          height: 36px;
-          padding: 0 11px;
-          border: 1px solid #e5ddd0;
-          border-radius: 8px;
+          height: 38px;
+          padding: 0 12px;
+          border: 1px solid #dfd5c5;
+          border-radius: 9px;
           background: #f5f3ef;
-          font-size: 12.5px;
+          font-size: 13px;
           color: var(--lc-ink);
           transition: border-color 140ms ease, background-color 140ms ease;
         }
@@ -1143,7 +1186,10 @@ export default function Collections() {
           background: var(--lc-green-soft);
         }
 
-        .lc-mobile-filters { display: none; }
+        .lc-mobile-trigger-wrap,
+        .lc-mobile-drawer {
+          display: none;
+        }
 
         /* Results Area */
         .lc-results {
@@ -1229,7 +1275,6 @@ export default function Collections() {
           transform: scale(1.03);
         }
 
-        /* Top-right corner dots */
         .lc-dots {
           position: absolute;
           top: 10px;
@@ -1407,29 +1452,89 @@ export default function Collections() {
           .lc-layout {
             grid-template-columns: minmax(0, 1fr);
             gap: 18px;
+            padding-bottom: 132px;
           }
 
-          .lc-sidebar { display: none; }
+          .lc-sidebar {
+            display: none;
+          }
 
-          .lc-mobile-filters {
-            display: block;
-            border: 1px solid var(--lc-line);
-            background: #ffffff;
+          .lc-mobile-trigger-wrap {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 72px;
+            z-index: 40;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
             padding: 0 16px;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(24, 67, 47, 0.04);
           }
 
-          .lc-mobile-filters summary {
-            cursor: pointer;
-            padding: 14px 0;
-            font-size: 14px;
+          .lc-mobile-pill-btn {
+            pointer-events: auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            min-width: 164px;
+            height: 42px;
+            padding: 0 22px;
+            border: 1px solid rgba(197, 164, 107, 0.45);
+            border-radius: 999px;
+            background: var(--lc-green);
+            color: #ffffff;
+            font-size: 12px;
             font-weight: 700;
-            color: var(--lc-green);
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+            box-shadow: 0 10px 24px rgba(20, 38, 30, 0.24);
           }
 
-          .lc-mobile-filters .lc-filter-content {
-            padding: 8px 0 18px;
+          .lc-mobile-drawer.is-open {
+            position: fixed;
+            inset: 0;
+            z-index: 60;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+          }
+
+          .lc-mobile-drawer-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 18px 136px;
+          }
+
+          .lc-mobile-close-bar {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 72px;
+            z-index: 65;
+            display: flex;
+            justify-content: center;
+            pointer-events: none;
+          }
+
+          .lc-mobile-close-btn {
+            pointer-events: auto;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            min-width: 136px;
+            height: 40px;
+            padding: 0 22px;
+            border: 0;
+            border-radius: 999px;
+            background: #141414;
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.26);
           }
 
           .lc-grid {
@@ -1454,7 +1559,7 @@ export default function Collections() {
             line-height: 1.6;
           }
 
-          .lc-layout { padding: 18px 14px 36px; }
+          .lc-layout { padding: 18px 14px 128px; }
 
           .lc-grid { gap: 12px; }
 
@@ -1499,15 +1604,45 @@ export default function Collections() {
           </div>
         </aside>
 
-        <details className="lc-mobile-filters">
-          <summary>Filters</summary>
-          <Filters
-            filters={filters}
-            onChange={updateFilters}
-            onClearAll={handleClearAll}
-            suffix="mobile"
-          />
-        </details>
+        <div className="lc-mobile-trigger-wrap">
+          <button
+            type="button"
+            className="lc-mobile-pill-btn"
+            aria-expanded={mobileFilterOpen}
+            onClick={() => setMobileFilterOpen(true)}
+          >
+            <span aria-hidden="true">▼</span>
+            <span>FILTERS</span>
+          </button>
+        </div>
+
+        <div
+          className={`lc-mobile-drawer ${mobileFilterOpen ? 'is-open' : ''}`}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mobile collection filters"
+        >
+          <div className="lc-mobile-drawer-scroll">
+            <Filters
+              filters={filters}
+              onChange={updateFilters}
+              onClearAll={handleClearAll}
+              suffix="mobile"
+              onSearchSubmit={handleMobileSearchSubmit}
+            />
+          </div>
+
+          <div className="lc-mobile-close-bar">
+            <button
+              type="button"
+              className="lc-mobile-close-btn"
+              onClick={() => setMobileFilterOpen(false)}
+            >
+              <span>✕</span>
+              <span>CLOSE</span>
+            </button>
+          </div>
+        </div>
 
         <section
           ref={resultsRef}

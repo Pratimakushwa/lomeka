@@ -12,6 +12,12 @@
 }
 
 @layer base {
+  html,
+  body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+
   body {
     @apply min-h-screen bg-ivory font-body text-navy antialiased;
   }
