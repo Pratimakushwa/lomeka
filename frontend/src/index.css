@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+@theme {
+  /* Existing navy classes ab forest green use karengi */
+  --color-navy: #0d4938;
+  --color-ivory: #faf7f0;
+  --color-gold: #b88a50;
+  --color-muted: #5f6f67;
+
+  --font-display: "Baskervville", Georgia, serif;
+  --font-body: "DM Sans", Arial, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply min-h-screen bg-ivory font-body text-navy antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font-family: var(--font-body);
+  }
+
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-4 outline-navy;
+  }
+
+  ::selection {
+    background-color: var(--color-gold);
+    color: var(--color-navy);
+  }
+}
+
+/* Link ke roop mein bane buttons bhi DM Sans use karenge */
+button,
+input[type="submit"],
+input[type="button"],
+a[role="button"],
+a[class*="bg-navy"],
+a[class*="bg-gold"],
+a[class*="border"] {
+  font-family: var(--font-body);
+  font-weight: 600;
+}
+
+/* Button hover animation */
+button,
+a[role="button"],
+a[class*="bg-navy"],
+a[class*="bg-gold"],
+a[class*="border"] {
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button,
+  a[role="button"],
+  a[class*="bg-navy"],
+  a[class*="bg-gold"],
+  a[class*="border"] {
+    transition: none;
+  }
+}
