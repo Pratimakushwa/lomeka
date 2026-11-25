@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const CATALOG_ITEMS = [
@@ -34,15 +35,14 @@ const CATALOG_ITEMS = [
   },
 ];
 
-export default function CategoryCatalogCarousel({ onNavigate = null }) {
+export default function CategoryCatalogCarousel() {
+  const navigate = useNavigate();
   const trackRef = useRef(null);
   const [isPaused, setIsPaused] = useState(false);
 
   function handleNavigate(e, href) {
-    if (onNavigate) {
-      e.preventDefault();
-      onNavigate(href);
-    }
+    e.preventDefault();
+    navigate(href);
   }
 
   function slideBy(direction = 1) {
@@ -136,9 +136,8 @@ export default function CategoryCatalogCarousel({ onNavigate = null }) {
                   className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                 />
 
-                {/* Hover Label Overlay */}
-                <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-center bg-gradient-to-t from-black/75 via-black/35 to-transparent px-4 pt-12 pb-5 opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-focus-visible:opacity-100">
-                  <span className="translate-y-1 font-display text-lg font-medium tracking-wide text-white transition-transform duration-300 group-hover:translate-y-0 sm:text-xl">
+                <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-center bg-gradient-to-t from-black/80 via-black/35 to-transparent px-3 pt-12 pb-4 opacity-100 transition-opacity duration-300 sm:px-4 sm:pb-5 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-visible:opacity-100">
+                  <span className="font-display text-base font-medium tracking-wide text-white sm:translate-y-1 sm:text-xl sm:transition-transform sm:duration-300 sm:group-hover:translate-y-0">
                     {item.label}
                   </span>
                 </div>

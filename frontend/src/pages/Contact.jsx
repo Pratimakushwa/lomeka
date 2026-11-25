@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Mail, MessageCircle, Camera, Sparkles, Package } from 'lucide-react';
 import CompanyLocations from './CompanyLocations';
 
@@ -47,10 +48,10 @@ const cards = [
 ];
 
 const fieldClass =
-  'mt-2 block w-full rounded-xl border border-[#c5a46b]/40 bg-white px-4 py-3 text-base font-normal text-[#102d47] placeholder:text-[#6b7872]/80 transition-colors focus:border-[#18432f] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#18432f]';
+  'mt-2 block w-full rounded-[var(--radius-card)] border border-gold/40 bg-white px-4 py-3 text-base font-normal text-navy placeholder:text-muted/80 transition-colors focus:border-navy focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-navy';
 
 const buttonClass =
-  'inline-flex min-h-12 items-center justify-center gap-2 rounded-full border border-[#102d47] px-6 py-3 text-center text-sm font-semibold transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-45';
+  'inline-flex min-h-12 items-center justify-center gap-2 rounded-sm border border-navy px-6 py-3 text-center text-sm font-semibold transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-45';
 
 const nonBlank = String.raw`.*\S.*`;
 
@@ -123,28 +124,26 @@ function ContactCard({ title, tag, Icon, description, label, href }) {
   return (
     <div data-reveal className="min-w-0">
       <article
-        className={`relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#c5a46b]/35 bg-[#fdfaf5] p-6 text-[#102d47] shadow-2xs transition-all duration-300 ${
-          href
-            ? 'motion-safe:hover:-translate-y-1 hover:border-[#c5a46b] hover:shadow-lg'
-            : ''
+        className={`brand-card relative flex h-full flex-col overflow-hidden bg-surface p-6 text-navy ${
+          href ? 'brand-card-hover' : ''
         }`}
       >
         <div className="flex items-center justify-between gap-2">
           <span
             aria-hidden="true"
-            className="grid size-11 place-items-center rounded-full border border-[#c5a46b]/45 bg-[#c5a46b]/10 text-[#18432f]"
+            className="grid size-11 place-items-center rounded-full border border-gold/45 bg-gold/10 text-navy"
           >
             <Icon size={20} strokeWidth={1.9} />
           </span>
 
-          <span className="rounded-full bg-[#f4eee3] px-2.5 py-1 text-[10px] font-bold tracking-[0.16em] text-[#6f825a] uppercase">
+          <span className="rounded-sm bg-surface-alt px-2.5 py-1 text-[10px] font-bold tracking-[0.16em] text-muted uppercase">
             {tag}
           </span>
         </div>
 
         <h2 className="mt-5 font-display text-3xl leading-tight">{title}</h2>
 
-        <p className="mt-2 flex-1 text-sm leading-relaxed text-[#4d5d55]">
+        <p className="mt-2 flex-1 text-sm leading-relaxed text-muted">
           {description}
         </p>
 
@@ -175,23 +174,33 @@ function ContactCard({ title, tag, Icon, description, label, href }) {
 
 export default function Contact() {
   const containerRef = useScrollReveal();
+  const [searchParams] = useSearchParams();
   const [garment, setGarment] = useState('');
   const [orderMode, setOrderMode] = useState('custom'); // 'custom' | 'catalog'
   const [fabricOption, setFabricOption] = useState('Need Recommendation');
   const [customFabric, setCustomFabric] = useState('');
   const [hasDesignFile, setHasDesignFile] = useState(false);
+  const [formError, setFormError] = useState('');
 
   useEffect(() => {
-    const query = new URLSearchParams(window.location.search);
-    const paramGarment = (query.get('garment') ?? '').trim().slice(0, 120);
+    const paramGarment = (searchParams.get('garment') ?? '').trim().slice(0, 120);
+    const type = (searchParams.get('type') ?? '').trim().toLowerCase();
+
     if (paramGarment) {
       setGarment(paramGarment);
       setOrderMode('catalog');
     }
-  }, []);
+
+    if (type === 'bulk-order' || type === 'enquiry') {
+      setOrderMode('catalog');
+    } else if (type === 'custom') {
+      setOrderMode('custom');
+    }
+  }, [searchParams]);
 
   function handleSubmit(event) {
     event.preventDefault();
+    setFormError('');
 
     const form = event.currentTarget;
     const fields = new FormData(form);
@@ -214,6 +223,24 @@ export default function Contact() {
     const message = String(fields.get('message') ?? '').trim();
 
     if (!name || !product || !Number.isSafeInteger(quantity) || quantity < 1) {
+      setFormError(
+        'Please fill in your name, garment/product, and a quantity of at least 1.',
+      );
+      return;
+    }
+
+    if (phone && phone.replace(/\D/g, '').length < 8) {
+      setFormError('Enter a valid phone number with at least 8 digits, or leave it blank.');
+      return;
+    }
+
+    if (channel === 'whatsapp' && !whatsappUrl) {
+      setFormError('WhatsApp is not configured yet. Please use email instead.');
+      return;
+    }
+
+    if (channel === 'email' && !emailUrl) {
+      setFormError('Email is not configured yet. Please use WhatsApp instead.');
       return;
     }
 
@@ -257,7 +284,7 @@ export default function Contact() {
   }
 
   return (
-    <div ref={containerRef} className="bg-ivory text-[#102d47]">
+    <div ref={containerRef} className="bg-ivory text-navy">
       <section
         aria-labelledby="contact-heading"
         className="mx-auto max-w-6xl px-5 pb-12 pt-14 sm:px-8 sm:pb-16 sm:pt-18"
@@ -265,21 +292,21 @@ export default function Contact() {
         <header className="mx-auto max-w-2xl text-center">
           <div
             aria-hidden="true"
-            className="mx-auto mb-4 h-px w-12 bg-[#c5a46b]"
+            className="mx-auto mb-4 h-px w-12 bg-gold"
           />
 
-          <p className="text-[11px] font-bold tracking-[0.2em] text-[#6f825a] uppercase">
+          <p className="text-[11px] font-bold tracking-[0.2em] text-gold uppercase">
             WHOLESALE & CUSTOM MANUFACTURING
           </p>
 
           <h1
             id="contact-heading"
-            className="mt-2 font-display text-4xl leading-tight tracking-tight text-[#18432f] sm:text-5xl lg:text-6xl"
+            className="mt-2 font-display text-4xl leading-tight tracking-tight text-navy sm:text-5xl lg:text-6xl"
           >
             Get in Touch
           </h1>
 
-          <p className="mt-4 text-sm leading-relaxed text-[#4d5d55] sm:text-base">
+          <p className="mt-4 text-sm leading-relaxed text-muted sm:text-base">
             Whether you need ready wholesale stock or custom-made T-shirts and
             tracksuits for a school function, event, or brand — tell us every
             detail below.
@@ -636,15 +663,24 @@ export default function Contact() {
 
             <div
               data-reveal
-              className="mt-7 border-t border-[#c5a46b]/25 pt-6"
+              className="mt-7 border-t border-gold/25 pt-6"
             >
+              {formError ? (
+                <p
+                  role="alert"
+                  className="mb-4 rounded-[var(--radius-card)] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+                >
+                  {formError}
+                </p>
+              ) : null}
+
               <div className="flex flex-wrap gap-3">
                 <button
                   type="submit"
                   name="channel"
                   value="whatsapp"
                   disabled={!whatsappUrl}
-                  className={`${buttonClass} w-full border-[#18432f] bg-[#18432f] text-white enabled:hover:bg-[#123324] sm:w-auto`}
+                  className={`${buttonClass} w-full border-navy bg-navy text-white enabled:hover:bg-navy/90 sm:w-auto`}
                 >
                   Send Full Requirement on WhatsApp
                 </button>

@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 const apparel = [
   {
     name: 'T-Shirts (Men’s & Women’s)',
@@ -127,18 +129,18 @@ export default function ManufacturingWholesale() {
                 Explore Our Apparel Range <span aria-hidden="true">↓</span>
               </a>
 
-              <a
-                href="/collections"
+              <Link
+                to="/collections"
                 className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-navy underline decoration-gold underline-offset-4"
               >
                 Browse Ready Catalogue <span aria-hidden="true">→</span>
-              </a>
+              </Link>
             </div>
           </div>
 
           <aside
             aria-labelledby="quote-heading"
-            className="rounded-sm border border-gold/50 bg-navy p-6 text-ivory sm:p-8"
+            className="rounded-[var(--radius-card)] border border-gold/50 bg-navy p-6 text-ivory sm:p-8"
           >
             <h2 id="quote-heading" className="font-display text-3xl leading-tight">
               What to Send for a Quote
@@ -157,18 +159,14 @@ export default function ManufacturingWholesale() {
               <li className="py-2.5">Delivery city and state / country</li>
             </ul>
 
-            <a
-              href="/contact"
-              className="mt-5 inline-flex min-h-11 items-center gap-3 rounded-sm bg-gold px-5 py-2.5 text-sm font-semibold text-navy transition-colors hover:bg-ivory focus-visible:outline-gold"
-            >
+            <Link to="/contact" className="brand-btn-gold mt-5">
               Request a Wholesale Quote <span aria-hidden="true">→</span>
-            </a>
+            </Link>
           </aside>
         </div>
       </section>
 
       <div className="mx-auto max-w-7xl divide-y divide-gold/35 px-5 sm:px-8">
-        {/* Apparel We Manufacture & Supply */}
         <section
           id="apparel"
           aria-labelledby="apparel-heading"
@@ -188,12 +186,12 @@ export default function ManufacturingWholesale() {
             </p>
           </div>
 
-          <div className="mt-6 divide-y divide-gold/30 border-y border-gold/35">
+          <div className="mt-6 grid gap-3 sm:gap-4">
             {apparel.map(({ name, description, href }) => (
-              <a
+              <Link
                 key={name}
-                href={href}
-                className="group flex flex-wrap items-center justify-between gap-x-8 gap-y-3 px-3 py-5 transition-colors hover:bg-gold/10 focus-visible:-outline-offset-2 sm:px-5"
+                to={href}
+                className="brand-card brand-card-hover group flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between sm:gap-8 sm:p-6"
               >
                 <div>
                   <h3 className="font-display text-2xl text-navy">{name}</h3>
@@ -202,16 +200,15 @@ export default function ManufacturingWholesale() {
                   </p>
                 </div>
 
-                <span className="text-sm font-semibold text-navy underline-offset-4 group-hover:underline">
+                <span className="shrink-0 text-sm font-semibold text-navy underline-offset-4 group-hover:underline">
                   {href === '/contact' ? 'Enquire Custom Design' : 'View Styles'}{' '}
                   <span aria-hidden="true">→</span>
                 </span>
-              </a>
+              </Link>
             ))}
           </div>
         </section>
 
-        {/* Production Standards & Factory Advantage */}
         <section aria-labelledby="standards-heading" className="py-9 sm:py-12">
           <div className="flex flex-col justify-between gap-2 sm:flex-row sm:items-end">
             <div>
@@ -230,22 +227,18 @@ export default function ManufacturingWholesale() {
 
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {manufacturingHighlights.map(({ title, description }) => (
-              <div
-                key={title}
-                className="border border-gold/30 bg-[#fdfaf5] p-5 sm:p-6"
-              >
+              <article key={title} className="brand-card bg-surface p-5 sm:p-6">
                 <h3 className="font-display text-2xl leading-tight text-navy">
                   {title}
                 </h3>
                 <p className="mt-2.5 text-sm leading-relaxed text-muted">
                   {description}
                 </p>
-              </div>
+              </article>
             ))}
           </div>
         </section>
 
-        {/* From Enquiry to Order */}
         <section aria-labelledby="order-heading" className="py-9 sm:py-12">
           <h2 id="order-heading" className="font-display text-3xl text-navy sm:text-4xl">
             From Enquiry to Bulk Dispatch
@@ -253,7 +246,7 @@ export default function ManufacturingWholesale() {
 
           <ol className="mt-6 grid gap-4 md:grid-cols-3">
             {orderSteps.map(({ title, description }, index) => (
-              <li key={title} className="border-t-2 border-gold bg-white p-5 sm:p-6">
+              <li key={title} className="brand-card border-t-2 border-t-gold p-5 sm:p-6">
                 <h3 className="font-display text-2xl leading-tight text-navy">
                   {index + 1}. {title}
                 </h3>

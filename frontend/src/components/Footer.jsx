@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import {
   Mail,
   MapPin,
@@ -61,8 +62,8 @@ function FooterLinks({ id, title, links }) {
       <ul className="mt-3.5 space-y-2">
         {links.map(({ href, label }) => (
           <li key={label}>
-            <a
-              href={href}
+            <Link
+              to={href}
               className="group inline-flex items-start gap-1.5 text-[13px] leading-snug text-[#234536] underline-offset-4 transition-colors hover:text-[#082f24] hover:underline"
             >
               <span>{label}</span>
@@ -72,7 +73,7 @@ function FooterLinks({ id, title, links }) {
                 aria-hidden="true"
                 className="mt-0.5 shrink-0 opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100"
               />
-            </a>
+            </Link>
           </li>
         ))}
       </ul>
@@ -128,8 +129,8 @@ export default function Footer() {
         <div className="grid grid-cols-1 gap-7 pb-7 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-8 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,0.9fr)] lg:gap-8 lg:pb-9">
           {/* Brand and address */}
           <div className="min-w-0">
-            <a
-              href="/"
+            <Link
+              to="/"
               aria-label="LOMEKA home"
               className="inline-block"
             >
@@ -140,7 +141,7 @@ export default function Footer() {
               <span className="mt-1.5 block text-[9px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-[#234536]">
                 MNF – Garment Manufacturing
               </span>
-            </a>
+            </Link>
 
             <p className="mt-3.5 max-w-sm text-[13px] leading-[1.65] text-[#234536]">
               Led by Ms. Neetu Kushwaha, LOMEKA manufactures and supplies
@@ -208,15 +209,15 @@ export default function Footer() {
 
             <div className="mt-3.5 flex flex-wrap gap-2">
               {connectLinks.map(({ href, label, Icon }) => (
-                <a
+                <Link
                   key={label}
-                  href={href}
+                  to={href}
                   aria-label={label}
                   title={label}
                   className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#123f32]/25 bg-white/15 text-[#123f32] transition-colors duration-200 hover:border-[#123f32] hover:bg-[#123f32] hover:text-[#fffaf1]"
                 >
                   <Icon size={15} strokeWidth={1.6} aria-hidden="true" />
-                </a>
+                </Link>
               ))}
             </div>
           </div>
@@ -231,21 +232,21 @@ export default function Footer() {
           <nav aria-label="Footer information">
             <ul className="flex flex-wrap items-center gap-6">
               <li>
-                <a
-                  href="/about"
+                <Link
+                  to="/about"
                   className="underline-offset-4 transition-colors hover:text-[#082f24] hover:underline"
                 >
                   About Us
-                </a>
+                </Link>
               </li>
 
               <li>
-                <a
-                  href="/contact"
+                <Link
+                  to="/contact"
                   className="underline-offset-4 transition-colors hover:text-[#082f24] hover:underline"
                 >
                   Contact Us
-                </a>
+                </Link>
               </li>
             </ul>
           </nav>

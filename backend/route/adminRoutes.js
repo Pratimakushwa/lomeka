@@ -1,210 +1,287 @@
-import express from 'express';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import Admin from '../models/Admin.js';
-import { requireAdmin } from '../middleware/requireAdmin.js';
+const express = require('express');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
+const { rateLimit } = require('express-rate-limit');
+const Admin = require('../models/Admin');
+const {
+  requireAdmin,
+  requireSuperAdmin,
+} = require('../middleware/requireAdmin');
+const {
+  cookieName,
+  cookieOptions,
+  getJwtSecret,
+} = require('../config/auth');
 
-const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET || 'lomeka_super_secret_key_change_me';
+function createAdminRouter(dummyPasswordHashRef) {
+  const router = express.Router();
 
-// Helper: Agar DB mein ek bhi admin nahi hai, toh .env se pehla Super Admin banaye
-async function ensureInitialAdmin() {
-  const count = await Admin.countDocuments();
-  if (count > 0) return;
-
-  const envEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
-  const envPassword = process.env.ADMIN_PASSWORD;
-
-  if (envEmail && envPassword) {
-    const passwordHash = await bcrypt.hash(envPassword, 10);
-    await Admin.create({
-      name: 'Owner Admin',
-      email: envEmail,
-      passwordHash,
-      role: 'superadmin',
-      isActive: true,
-    });
-  }
-}
-
-// POST /api/admin/login
-router.post('/login', async (req, res) => {
-  try {
-    await ensureInitialAdmin();
-
-    const email = String(req.body?.email || '').trim().toLowerCase();
-    const password = String(req.body?.password || '');
-
-    if (!email || !password) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'Email and password are required.' });
-    }
-
-    const admin = await Admin.findOne({ email });
-    if (!admin || !admin.isActive) {
-      return res
-        .status(401)
-        .json({ success: false, message: 'Invalid email or password.' });
-    }
-
-    const isMatch = await bcrypt.compare(password, admin.passwordHash);
-    if (!isMatch) {
-      return res
-        .status(401)
-        .json({ success: false, message: 'Invalid email or password.' });
-    }
-
-    const token = jwt.sign(
-      { id: admin._id, email: admin.email, role: admin.role },
-      JWT_SECRET,
-      { expiresIn: '7d' },
-    );
-
-    res.cookie('admin_token', token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-    });
-
-    return res.json({
-      success: true,
-      admin: {
-        id: admin._id,
-        name: admin.name,
-        email: admin.email,
-        role: admin.role,
-      },
-    });
-  } catch (err) {
-    return res
-      .status(500)
-      .json({ success: false, message: err.message || 'Login failed.' });
-  }
-});
-
-// GET /api/admin/me
-router.get('/me', requireAdmin, (req, res) => {
-  return res.json({
-    success: true,
-    admin: {
-      id: req.admin._id,
-      name: req.admin.name,
-      email: req.admin.email,
-      role: req.admin.role,
+  const loginLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 10,
+    standardHeaders: 'draft-7',
+    legacyHeaders: false,
+    skipSuccessfulRequests: true,
+    message: {
+      success: false,
+      message: 'Too many login attempts. Please try again later.',
     },
   });
-});
 
-// POST /api/admin/logout
-router.post('/logout', (_req, res) => {
-  res.clearCookie('admin_token');
-  return res.json({ success: true });
-});
+  router.post('/login', loginLimiter, async (req, res, next) => {
+    const { email, password } = req.body || {};
 
-// GET /api/admin/list (Saare admins ki list)
-router.get('/list', requireAdmin, async (_req, res) => {
-  try {
-    const admins = await Admin.find()
-      .select('-passwordHash')
-      .sort({ createdAt: -1 });
-    return res.json({ success: true, admins });
-  } catch (err) {
-    return res.status(500).json({ success: false, message: err.message });
-  }
-});
-
-// POST /api/admin/create (Naya admin account banane ke liye)
-router.post('/create', requireAdmin, async (req, res) => {
-  try {
-    const name = String(req.body?.name || '').trim();
-    const email = String(req.body?.email || '').trim().toLowerCase();
-    const password = String(req.body?.password || '');
-    const role = req.body?.role === 'superadmin' ? 'superadmin' : 'manager';
-
-    if (!name || !email || password.length < 6) {
+    if (
+      typeof email !== 'string' ||
+      typeof password !== 'string' ||
+      email.length > 254 ||
+      password.length === 0 ||
+      Buffer.byteLength(password, 'utf8') > 72
+    ) {
       return res.status(400).json({
         success: false,
-        message: 'Name, valid email, and at least 6-character password required.',
+        message: 'Enter a valid email and password.',
       });
     }
 
-    const exists = await Admin.findOne({ email });
-    if (exists) {
-      return res
-        .status(409)
-        .json({ success: false, message: 'An admin with this email already exists.' });
+    try {
+      const admin = await Admin.findOne({
+        email: email.trim().toLowerCase(),
+      }).select('+passwordHash');
+
+      const validPassword = await bcrypt.compare(
+        password,
+        admin?.passwordHash || dummyPasswordHashRef.value,
+      );
+
+      if (!admin || admin.isActive === false || !validPassword) {
+        return res.status(401).json({
+          success: false,
+          message: 'Email or password is incorrect.',
+        });
+      }
+
+      const token = jwt.sign({}, getJwtSecret(), {
+        algorithm: 'HS256',
+        subject: String(admin._id),
+        issuer: 'lomeka-backend',
+        audience: 'lomeka-admin',
+        expiresIn: '8h',
+      });
+
+      res.cookie(cookieName, token, {
+        ...cookieOptions,
+        maxAge: 8 * 60 * 60 * 1000,
+      });
+
+      res.json({
+        success: true,
+        admin: {
+          id: String(admin._id),
+          name: admin.name || 'Admin',
+          email: admin.email,
+          role: admin.role || 'manager',
+        },
+      });
+    } catch (error) {
+      next(error);
     }
+  });
 
-    const passwordHash = await bcrypt.hash(password, 10);
-    const created = await Admin.create({
-      name,
-      email,
-      passwordHash,
-      role,
-      isActive: true,
-    });
-
-    return res.status(201).json({
+  router.get('/me', requireAdmin, (req, res) => {
+    res.json({
       success: true,
       admin: {
-        id: created._id,
-        name: created.name,
-        email: created.email,
-        role: created.role,
-        isActive: created.isActive,
+        id: String(req.admin._id),
+        name: req.admin.name || 'Admin',
+        email: req.admin.email,
+        role: req.admin.role || 'manager',
       },
     });
-  } catch (err) {
-    return res.status(500).json({ success: false, message: err.message });
-  }
-});
+  });
 
-// PATCH /api/admin/change-password (Apna password badalne ke liye)
-router.patch('/change-password', requireAdmin, async (req, res) => {
-  try {
-    const currentPassword = String(req.body?.currentPassword || '');
-    const newPassword = String(req.body?.newPassword || '');
+  router.post('/logout', (req, res) => {
+    res.clearCookie(cookieName, cookieOptions);
 
-    if (newPassword.length < 6) {
-      return res.status(400).json({
+    res.json({
+      success: true,
+      message: 'Logged out successfully.',
+    });
+  });
+
+  router.get('/list', requireAdmin, requireSuperAdmin, async (req, res, next) => {
+    try {
+      const admins = await Admin.find()
+        .select('name email role isActive createdAt')
+        .sort({ createdAt: -1 });
+
+      res.json({
+        success: true,
+        admins,
+      });
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.post('/create', requireAdmin, async (req, res, next) => {
+    const { name, email, password, role } = req.body || {};
+    const cleanName = typeof name === 'string' ? name.trim() : '';
+    const cleanEmail =
+      typeof email === 'string' ? email.trim().toLowerCase() : '';
+    const requestedRole = role === 'superadmin' ? 'superadmin' : 'manager';
+
+    if (requestedRole === 'superadmin' && req.admin.role !== 'superadmin') {
+      return res.status(403).json({
         success: false,
-        message: 'New password must be at least 6 characters.',
+        message: 'Only a superadmin can create another superadmin.',
       });
     }
 
-    const admin = await Admin.findById(req.admin._id);
-    const isMatch = await bcrypt.compare(currentPassword, admin.passwordHash);
-    if (!isMatch) {
-      return res
-        .status(401)
-        .json({ success: false, message: 'Current password is incorrect.' });
+    if (
+      !cleanName ||
+      cleanName.length > 80 ||
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail) ||
+      cleanEmail.length > 254 ||
+      typeof password !== 'string' ||
+      password.length < 6 ||
+      Buffer.byteLength(password, 'utf8') > 72
+    ) {
+      return res.status(400).json({
+        success: false,
+        message:
+          'Provide a valid name, email, and a password of at least 6 characters (max 72 bytes).',
+      });
     }
 
-    admin.passwordHash = await bcrypt.hash(newPassword, 10);
-    await admin.save();
+    try {
+      const exists = await Admin.exists({ email: cleanEmail });
+      if (exists) {
+        return res.status(409).json({
+          success: false,
+          message: 'An admin with this email already exists.',
+        });
+      }
 
-    return res.json({ success: true, message: 'Password updated successfully.' });
-  } catch (err) {
-    return res.status(500).json({ success: false, message: err.message });
-  }
-});
+      const passwordHash = await bcrypt.hash(password, 12);
+      const created = await Admin.create({
+        name: cleanName,
+        email: cleanEmail,
+        passwordHash,
+        role: requestedRole,
+        isActive: true,
+      });
 
-// DELETE /api/admin/:id (Kisi dusre admin ko hatane ke liye)
-router.delete('/:id', requireAdmin, async (req, res) => {
-  try {
-    if (String(req.admin._id) === String(req.params.id)) {
-      return res
-        .status(400)
-        .json({ success: false, message: 'You cannot delete your own account.' });
+      res.status(201).json({
+        success: true,
+        admin: {
+          id: String(created._id),
+          name: created.name,
+          email: created.email,
+          role: created.role,
+        },
+      });
+    } catch (error) {
+      if (error.code === 11000) {
+        return res.status(409).json({
+          success: false,
+          message: 'An admin with this email already exists.',
+        });
+      }
+      next(error);
     }
+  });
 
-    await Admin.findByIdAndDelete(req.params.id);
-    return res.json({ success: true });
-  } catch (err) {
-    return res.status(500).json({ success: false, message: err.message });
-  }
-});
+  router.patch(
+    '/change-password',
+    requireAdmin,
+    async (req, res, next) => {
+      const { currentPassword, newPassword } = req.body || {};
 
-export default router;
+      if (
+        typeof currentPassword !== 'string' ||
+        typeof newPassword !== 'string' ||
+        currentPassword.length === 0 ||
+        newPassword.length < 6 ||
+        Buffer.byteLength(newPassword, 'utf8') > 72
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            'New password must be at least 6 characters (max 72 bytes).',
+        });
+      }
+
+      try {
+        const admin = await Admin.findById(req.admin._id).select(
+          '+passwordHash',
+        );
+        if (!admin) {
+          return res.status(404).json({
+            success: false,
+            message: 'Admin account not found.',
+          });
+        }
+
+        const validCurrent = await bcrypt.compare(
+          currentPassword,
+          admin.passwordHash,
+        );
+        if (!validCurrent) {
+          return res.status(401).json({
+            success: false,
+            message: 'Current password is incorrect.',
+          });
+        }
+
+        admin.passwordHash = await bcrypt.hash(newPassword, 12);
+        await admin.save();
+
+        res.json({
+          success: true,
+          message: 'Password updated successfully.',
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  router.delete(
+    '/:id',
+    requireAdmin,
+    requireSuperAdmin,
+    async (req, res, next) => {
+      const { id } = req.params;
+
+      if (!mongoose.isValidObjectId(id)) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid admin ID.',
+        });
+      }
+
+      if (String(req.admin._id) === id) {
+        return res.status(400).json({
+          success: false,
+          message: 'You cannot delete your own account.',
+        });
+      }
+
+      try {
+        await Admin.findByIdAndDelete(id);
+        res.json({
+          success: true,
+          message: 'Admin removed.',
+        });
+      } catch (error) {
+        next(error);
+      }
+    },
+  );
+
+  return router;
+}
+
+module.exports = createAdminRouter;

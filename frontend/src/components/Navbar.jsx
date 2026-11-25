@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const CATEGORIES = {
   men: [
@@ -389,11 +390,10 @@ function Icon({ type }) {
   );
 }
 
-export default function Navbar({
-  currentPath = '/',
-  onNavigate,
-}) {
+export default function Navbar() {
   const id = useId();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const [query, setQuery] = useState({
     gender: '',
@@ -408,7 +408,7 @@ export default function Navbar({
   const toggleRef = useRef(null);
 
   const path =
-    currentPath.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
+    location.pathname.replace(/\/+$/, '') || '/';
 
   function closeDrawer() {
     dialogRef.current?.close();
@@ -416,26 +416,16 @@ export default function Navbar({
   }
 
   useEffect(() => {
-    function syncLocation() {
-      const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
 
-      setQuery({
-        gender: (params.get('gender') || '').toLowerCase(),
-        category: (params.get('category') || '').toLowerCase(),
-      });
+    setQuery({
+      gender: (params.get('gender') || '').toLowerCase(),
+      category: (params.get('category') || '').toLowerCase(),
+    });
 
-      setOpenMenu(null);
-      closeDrawer();
-    }
-
-    syncLocation();
-
-    window.addEventListener('popstate', syncLocation);
-
-    return () => {
-      window.removeEventListener('popstate', syncLocation);
-    };
-  }, [currentPath]);
+    setOpenMenu(null);
+    closeDrawer();
+  }, [location.pathname, location.search]);
 
   useEffect(() => {
     function outside(event) {
@@ -492,7 +482,7 @@ export default function Navbar({
     };
   }, [drawerOpen]);
 
-  function navigate(event, href) {
+  function handleNavigate(event, href) {
     if (
       event.defaultPrevented ||
       event.button !== 0 ||
@@ -504,21 +494,18 @@ export default function Navbar({
       return;
     }
 
+    event.preventDefault();
     setOpenMenu(null);
     closeDrawer();
 
-    if (onNavigate) {
-      event.preventDefault();
+    const url = new URL(href, window.location.origin);
 
-      const url = new URL(href, window.location.origin);
+    setQuery({
+      gender: url.searchParams.get('gender') || '',
+      category: url.searchParams.get('category') || '',
+    });
 
-      setQuery({
-        gender: url.searchParams.get('gender') || '',
-        category: url.searchParams.get('category') || '',
-      });
-
-      onNavigate(href);
-    }
+    navigate(`${url.pathname}${url.search}${url.hash}`);
   }
 
   function renderLink(label, href, className) {
@@ -528,7 +515,7 @@ export default function Navbar({
         href={href}
         className={className}
         aria-current={path === href ? 'page' : undefined}
-        onClick={(event) => navigate(event, href)}
+        onClick={(event) => handleNavigate(event, href)}
       >
         {label}
       </a>
@@ -554,7 +541,7 @@ export default function Navbar({
                 href={href}
                 className="ln-category"
                 aria-current={isActive ? 'page' : undefined}
-                onClick={(event) => navigate(event, href)}
+                onClick={(event) => handleNavigate(event, href)}
               >
                 {label}
               </a>
@@ -566,7 +553,7 @@ export default function Navbar({
           className="ln-category ln-all"
           href={`/collections?gender=${gender}`}
           onClick={(event) =>
-            navigate(event, `/collections?gender=${gender}`)
+            handleNavigate(event, `/collections?gender=${gender}`)
           }
         >
           All {gender === 'men' ? 'Men’s' : 'Women’s'} Collection →
@@ -584,7 +571,7 @@ export default function Navbar({
           className="ln-brand"
           href="/"
           aria-label="LOMEKA Fashion home"
-          onClick={(event) => navigate(event, '/')}
+          onClick={(event) => handleNavigate(event, '/')}
         >
           <img
             src="/lomeka-logo.png"

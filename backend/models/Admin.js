@@ -1,11 +1,12 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const adminSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: true,
       trim: true,
+      default: 'Admin',
+      maxlength: 80,
     },
     email: {
       type: String,
@@ -13,10 +14,12 @@ const adminSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      maxlength: 254,
     },
     passwordHash: {
       type: String,
       required: true,
+      select: false,
     },
     role: {
       type: String,
@@ -31,4 +34,4 @@ const adminSchema = new mongoose.Schema(
   { timestamps: true },
 );
 
-export default mongoose.models.Admin || mongoose.model('Admin', adminSchema);
+module.exports = mongoose.models.Admin || mongoose.model('Admin', adminSchema);

@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -24,7 +25,8 @@ import AdminProfile from './AdminProfile.jsx';
 import AdminSections from './AdminSections.jsx';
 
 const API_URL = (
-  import.meta.env.VITE_API_URL || 'http://localhost:5000'
+  import.meta.env.VITE_API_URL ??
+  (import.meta.env.DEV ? 'http://localhost:5000' : '')
 ).replace(/\/+$/, '');
 
 const INITIAL_ORDERS = [
@@ -507,7 +509,12 @@ function AdminWorkspace({ admin, currentPath, onNavigate, onLogout, busy, setBus
   );
 }
 
-export default function AdminConsole({ currentPath, onNavigate }) {
+export default function AdminConsole() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const onNavigate = (path) => navigate(path);
+
   const [admin, setAdmin] = useState(null);
   const [checking, setChecking] = useState(true);
   const [busy, setBusy] = useState(false);
@@ -615,42 +622,42 @@ export default function AdminConsole({ currentPath, onNavigate }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f4ee] text-[#0b132b]">
-      <header className="border-b border-[#c5a059]/30 bg-white">
+    <div className="min-h-screen bg-ivory text-navy">
+      <header className="border-b border-gold/30 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-4">
-          <a
-            href="/"
+          <Link
+            to="/"
             aria-label="LOMEKA Fashion home"
             className="inline-flex items-center gap-3"
           >
             <img
               src="/lomeka-logo.png"
               alt="LOMEKA Fashion"
-              className="h-12 w-12 rounded bg-[#0f1517] p-1 object-contain"
+              className="h-12 w-12 rounded-sm bg-navy p-1 object-contain"
             />
-            <span className="font-display text-2xl tracking-wider text-[#0b132b]">
+            <span className="font-display text-2xl tracking-wider text-navy">
               LOMEKA
             </span>
-          </a>
+          </Link>
 
-          <a
-            href="/"
-            className="inline-flex items-center gap-1 text-sm font-medium text-[#0b132b] underline-offset-4 hover:underline"
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1 text-sm font-medium text-navy underline-offset-4 hover:underline"
           >
             <span>View website</span>
             <ExternalLink size={14} />
-          </a>
+          </Link>
         </div>
       </header>
 
       <main className="mx-auto max-w-6xl px-5 py-12 sm:py-16">
-        <section className="mx-auto max-w-md rounded-xl border border-[#c5a059]/35 bg-white p-6 shadow-sm sm:p-9">
+        <section className="brand-card mx-auto max-w-md p-6 sm:p-9">
           <div className="mb-6">
             <span
               aria-hidden="true"
-              className="mb-5 block h-1 w-12 rounded bg-[#6f825a]"
+              className="mb-5 block h-1 w-12 rounded-sm bg-gold"
             />
-            <h1 className="font-display text-4xl text-[#0b132b]">Admin Login</h1>
+            <h1 className="font-display text-4xl text-navy">Admin Login</h1>
             <p className="mt-3 text-sm leading-relaxed text-muted">
               Sign in to your LOMEKA admin account.
             </p>
@@ -671,7 +678,7 @@ export default function AdminConsole({ currentPath, onNavigate }) {
                 required
                 maxLength={254}
                 disabled={busy}
-                className="mt-2 w-full rounded-md border border-[#c5a059]/40 bg-[#fcfaf7] px-4 py-3 text-sm outline-none focus:border-[#0b132b] focus:ring-1 focus:ring-[#0b132b]"
+                className="mt-2 w-full rounded-[var(--radius-card)] border border-gold/40 bg-surface px-4 py-3 text-sm focus:border-navy focus:ring-1 focus:ring-navy"
               />
             </div>
 
@@ -691,14 +698,14 @@ export default function AdminConsole({ currentPath, onNavigate }) {
                 onChange={(event) => setPassword(event.target.value)}
                 required
                 disabled={busy}
-                className="mt-2 w-full rounded-md border border-[#c5a059]/40 bg-[#fcfaf7] px-4 py-3 text-sm outline-none focus:border-[#0b132b] focus:ring-1 focus:ring-[#0b132b]"
+                className="mt-2 w-full rounded-[var(--radius-card)] border border-gold/40 bg-surface px-4 py-3 text-sm focus:border-navy focus:ring-1 focus:ring-navy"
               />
             </div>
 
             {error && (
               <p
                 role="alert"
-                className="rounded-md border border-red-200 bg-red-50 px-3 py-3 text-sm text-red-700"
+                className="rounded-[var(--radius-card)] border border-red-200 bg-red-50 px-3 py-3 text-sm text-red-700"
               >
                 {error}
               </p>
@@ -707,7 +714,7 @@ export default function AdminConsole({ currentPath, onNavigate }) {
             <button
               type="submit"
               disabled={busy}
-              className="w-full rounded-md bg-[#0b132b] px-5 py-3 text-sm font-semibold text-[#dce8cf] transition-colors hover:bg-[#132044] disabled:cursor-wait disabled:opacity-60"
+              className="brand-btn-primary w-full disabled:cursor-wait disabled:opacity-60"
             >
               {busy ? 'Signing in…' : 'Sign in'}
             </button>

@@ -1,17 +1,25 @@
 @import "tailwindcss";
 
 @theme {
-  /* Existing navy classes ab forest green use karengi */
   --color-navy: #0d4938;
   --color-ivory: #faf7f0;
   --color-gold: #b88a50;
   --color-muted: #5f6f67;
+  --color-surface: #fdfaf5;
+  --color-surface-alt: #f5efe6;
 
-  --font-display: "Baskervville", Georgia, serif;
-  --font-body: "DM Sans", Arial, sans-serif;
+  --font-display: "Baskervville", Georgia, "Times New Roman", serif;
+  --font-body: "DM Sans", "Segoe UI", Arial, sans-serif;
+
+  --radius-card: 0.5rem;
+  --shadow-card: 0 1px 2px rgb(13 73 56 / 0.06), 0 8px 24px rgb(13 73 56 / 0.05);
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   html,
   body {
     max-width: 100%;
@@ -20,12 +28,25 @@
 
   body {
     @apply min-h-screen bg-ivory font-body text-navy antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  img,
+  svg,
+  video {
+    max-width: 100%;
+    height: auto;
   }
 
   h1,
   h2,
   h3 {
     @apply font-display;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 
   button,
@@ -53,7 +74,112 @@
   }
 }
 
-/* Link ke roop mein bane buttons bhi DM Sans use karenge */
+@layer components {
+  .page-shell {
+    @apply pb-16 md:pb-0;
+  }
+
+  .section-pad {
+    @apply px-5 py-10 sm:px-8 sm:py-14 lg:py-16;
+  }
+
+  .brand-card {
+    border: 1px solid rgb(184 138 80 / 0.32);
+    border-radius: var(--radius-card);
+    background: #ffffff;
+    box-shadow: var(--shadow-card);
+    transition:
+      transform 200ms ease,
+      border-color 200ms ease,
+      box-shadow 200ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .brand-card-hover:hover {
+      transform: translateY(-2px);
+      border-color: rgb(184 138 80 / 0.7);
+      box-shadow:
+        0 2px 4px rgb(13 73 56 / 0.06),
+        0 14px 28px rgb(13 73 56 / 0.08);
+    }
+  }
+
+  .brand-btn {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.125rem;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.25;
+    transition:
+      background-color 180ms ease,
+      color 180ms ease,
+      border-color 180ms ease;
+  }
+
+  .brand-btn-primary {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.125rem;
+    border: 1px solid var(--color-navy);
+    background: var(--color-navy);
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #ffffff;
+  }
+
+  .brand-btn-primary:hover {
+    background: color-mix(in srgb, var(--color-navy) 90%, black);
+  }
+
+  .brand-btn-secondary {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.125rem;
+    border: 1px solid color-mix(in srgb, var(--color-navy) 80%, transparent);
+    background: transparent;
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-navy);
+  }
+
+  .brand-btn-secondary:hover {
+    background: var(--color-navy);
+    color: #ffffff;
+  }
+
+  .brand-btn-gold {
+    display: inline-flex;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border-radius: 0.125rem;
+    border: 1px solid var(--color-gold);
+    background: var(--color-gold);
+    padding: 0.625rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--color-navy);
+  }
+
+  .brand-btn-gold:hover {
+    background: var(--color-ivory);
+  }
+}
+
 button,
 input[type="submit"],
 input[type="button"],
@@ -65,7 +191,6 @@ a[class*="border"] {
   font-weight: 600;
 }
 
-/* Button hover animation */
 button,
 a[role="button"],
 a[class*="bg-navy"],
@@ -79,11 +204,16 @@ a[class*="border"] {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   button,
   a[role="button"],
   a[class*="bg-navy"],
   a[class*="bg-gold"],
-  a[class*="border"] {
+  a[class*="border"],
+  .brand-card {
     transition: none;
   }
 }

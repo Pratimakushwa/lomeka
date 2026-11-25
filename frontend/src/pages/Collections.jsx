@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 const API_URL = (
-  import.meta.env.VITE_API_URL || 'http://localhost:5000'
+  import.meta.env.VITE_API_URL ??
+  (import.meta.env.DEV ? 'http://localhost:5000' : '')
 ).replace(/\/+$/, '');
 
 const sizes = ['S', 'M', 'L', 'XL', 'XXL'];
@@ -696,15 +698,15 @@ function ProductCard({ product, size, index }) {
         </div>
 
         <div className="lc-card-actions">
-          <a href={`/contact?${new URLSearchParams({ garment, type: 'enquiry' })}`}>
+          <Link to={`/contact?${new URLSearchParams({ garment, type: 'enquiry' })}`}>
             Wholesale Enquiry <span aria-hidden="true">↗</span>
-          </a>
-          <a
-            href={`/contact?${new URLSearchParams({ garment, type: 'bulk-order' })}`}
+          </Link>
+          <Link
+            to={`/contact?${new URLSearchParams({ garment, type: 'bulk-order' })}`}
             className="lc-bulk-link"
           >
             Bulk Order
-          </a>
+          </Link>
         </div>
       </div>
     </article>
@@ -712,8 +714,11 @@ function ProductCard({ product, size, index }) {
 }
 
 export default function Collections() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [filters, setFilters] = useState(readFilters);
   const [apiProducts, setApiProducts] = useState([]);
+  const [catalogStatus, setCatalogStatus] = useState('loading');
   const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const resultsRef = useRef(null);
 
@@ -721,38 +726,28 @@ export default function Collections() {
     const controller = new AbortController();
 
     async function fetchLiveProducts() {
+      setCatalogStatus('loading');
+
       try {
-        const res = await fetch(`${API_URL}/api/products?all=true`, {
-          credentials: 'include',
+        const res = await fetch(`${API_URL}/api/products`, {
           signal: controller.signal,
         });
         const data = await res.json().catch(() => null);
         const list = extractProductsList(data);
 
         if (res.ok && list.length) {
-          const mapped = list
-            .filter((p) => p?.isActive !== false)
-            .map((item, idx) => mapApiProductToCollectionItem(item, idx));
+          const mapped = list.map((item, idx) =>
+            mapApiProductToCollectionItem(item, idx),
+          );
           setApiProducts(mapped);
+          setCatalogStatus('ready');
           return;
         }
 
-        const fallbackRes = await fetch(`${API_URL}/api/products`, {
-          credentials: 'include',
-          signal: controller.signal,
-        });
-        const fallbackData = await fallbackRes.json().catch(() => null);
-        const fallbackList = extractProductsList(fallbackData);
-
-        if (fallbackRes.ok && fallbackList.length) {
-          const mapped = fallbackList
-            .filter((p) => p?.isActive !== false)
-            .map((item, idx) => mapApiProductToCollectionItem(item, idx));
-          setApiProducts(mapped);
-        }
+        setCatalogStatus(res.ok ? 'empty-live' : 'fallback');
       } catch (err) {
         if (err.name !== 'AbortError') {
-          // Keep static catalog if API is unreachable
+          setCatalogStatus('fallback');
         }
       }
     }
@@ -762,18 +757,8 @@ export default function Collections() {
   }, []);
 
   useEffect(() => {
-    function syncLocation() {
-      setFilters(readFilters());
-    }
-
-    window.addEventListener('popstate', syncLocation);
-    window.addEventListener('hashchange', syncLocation);
-
-    return () => {
-      window.removeEventListener('popstate', syncLocation);
-      window.removeEventListener('hashchange', syncLocation);
-    };
-  }, []);
+    setFilters(readFilters());
+  }, [location.search, location.hash]);
 
   useEffect(() => {
     if (!mobileFilterOpen) return;
@@ -787,9 +772,9 @@ export default function Collections() {
   function updateFilters(changes) {
     const next = { ...filters, page: 1, ...changes };
     const url = makeUrl(next);
-    const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    const current = `${location.pathname}${location.search}${location.hash}`;
 
-    if (current !== url) window.history.pushState(null, '', url);
+    if (current !== url) navigate(url);
     setFilters(next);
   }
 
@@ -868,13 +853,15 @@ export default function Collections() {
     <div className="lc-page">
       <style>{`
         .lc-page {
-          --lc-green: #18432f;
+          --lc-green: #0d4938;
           --lc-green-soft: #eef5f0;
-          --lc-gold: #c5a46b;
-          --lc-line: #e4d8c3;
+          --lc-gold: #b88a50;
+          --lc-line: rgba(184, 138, 80, 0.32);
           --lc-ink: #14261e;
           color: var(--lc-ink);
           background: #faf7f2;
+          overflow-x: clip;
+          max-width: 100%;
         }
 
         .lc-page * { box-sizing: border-box; }
@@ -897,7 +884,7 @@ export default function Collections() {
           color: #faf7f2;
           padding: 64px 24px;
           text-align: center;
-          border-bottom: 1px solid rgba(197, 164, 107, 0.35);
+          border-bottom: 1px solid rgba(184, 138, 80, 0.35);
         }
 
         .lc-banner-inner {
@@ -1228,25 +1215,27 @@ export default function Collections() {
         .lc-grid {
           display: grid;
           grid-template-columns: repeat(3, minmax(0, 1fr));
-          gap: 18px;
+          gap: 16px;
           align-items: stretch;
+          width: 100%;
         }
 
         .lc-card {
           min-width: 0;
+          max-width: 100%;
           overflow: hidden;
           display: flex;
           flex-direction: column;
           background: #ffffff;
           border: 1px solid var(--lc-line);
-          border-radius: 12px;
-          transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+          border-radius: 8px;
+          transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease;
         }
 
         .lc-card:hover {
-          transform: translateY(-3px);
-          border-color: rgba(24, 67, 47, 0.35);
-          box-shadow: 0 10px 24px rgba(24, 67, 47, 0.08);
+          transform: translateY(-2px);
+          border-color: rgba(184, 138, 80, 0.55);
+          box-shadow: 0 8px 20px rgba(13, 73, 56, 0.07);
         }
 
         .lc-product-image {
@@ -1446,13 +1435,14 @@ export default function Collections() {
 
         @media (max-width: 1023px) {
           .lc-banner {
-            padding: 48px 20px;
+            padding: 40px 16px;
           }
 
           .lc-layout {
             grid-template-columns: minmax(0, 1fr);
             gap: 18px;
             padding-bottom: 132px;
+            max-width: 100%;
           }
 
           .lc-sidebar {
@@ -1537,16 +1527,19 @@ export default function Collections() {
             box-shadow: 0 10px 24px rgba(0, 0, 0, 0.26);
           }
 
+          .lc-product-image { height: 300px; }
+        }
+
+        @media (max-width: 900px) {
           .lc-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
           }
-
-          .lc-product-image { height: 300px; }
         }
 
         @media (max-width: 600px) {
           .lc-banner {
-            padding: 36px 16px;
+            padding: 32px 16px;
           }
 
           .lc-banner h1 {
@@ -1557,11 +1550,18 @@ export default function Collections() {
             margin-top: 12px;
             font-size: 13px;
             line-height: 1.6;
+            max-width: 100%;
+            padding: 0;
           }
 
-          .lc-layout { padding: 18px 14px 128px; }
+          .lc-layout { padding: 18px 16px 128px; max-width: 100%; }
 
-          .lc-grid { gap: 12px; }
+          .lc-results-header {
+            padding: 12px 14px;
+            border-radius: 8px;
+          }
+
+          .lc-grid { gap: 16px; }
 
           .lc-product-image {
             height: clamp(180px, 50vw, 250px);
@@ -1577,6 +1577,28 @@ export default function Collections() {
           }
 
           .lc-card-actions a { font-size: 11px; }
+        }
+
+        @media (max-width: 480px) {
+          .lc-grid {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 16px;
+          }
+
+          .lc-banner {
+            padding: 32px 16px;
+          }
+
+          .lc-layout {
+            padding-left: 16px;
+            padding-right: 16px;
+          }
+
+          .lc-mobile-pill-btn,
+          .lc-mobile-close-btn {
+            min-width: 0;
+            max-width: calc(100vw - 32px);
+          }
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -1652,9 +1674,11 @@ export default function Collections() {
           <div className="lc-results-header">
             <h2 id="styles-heading">{categoryLabel}</h2>
             <p aria-live="polite">
-              {filteredProducts.length
-                ? `${start + 1}–${start + visibleProducts.length} of ${filteredProducts.length} styles`
-                : '0 styles'}
+              {catalogStatus === 'loading'
+                ? 'Updating catalogue…'
+                : filteredProducts.length
+                  ? `${start + 1}–${start + visibleProducts.length} of ${filteredProducts.length} styles`
+                  : '0 styles'}
             </p>
           </div>
 
