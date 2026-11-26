@@ -82,7 +82,15 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
-      enum: ['T-Shirts', 'Tracksuits', 'Hoodies & Jackets', 'Activewear', 'Other'],
+      enum: [
+        'T-Shirts',
+        'Shirt',
+        'Shirts',
+        'Tracksuits',
+        'Hoodies & Jackets',
+        'Activewear',
+        'Other',
+      ],
       default: 'T-Shirts',
     },
     fabric: {
