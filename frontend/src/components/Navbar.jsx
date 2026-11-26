@@ -41,7 +41,7 @@ const LINKS = [
   ['Men', 'men'],
   ['Women', 'women'],
   ['Manufacturing & Wholesale', '/manufacturing-wholesale'],
-  ['Blog', '/blog'],
+
 ];
 
 const styles = `

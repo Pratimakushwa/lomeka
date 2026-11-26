@@ -633,11 +633,9 @@ export default function AdminConsole() {
             <img
               src="/lomeka-logo.png"
               alt="LOMEKA Fashion"
-              className="h-12 w-12 rounded-sm bg-navy p-1 object-contain"
+              className="h-20 w-20 rounded-sm p-1 object-contain"
             />
-            <span className="font-display text-2xl tracking-wider text-navy">
-              LOMEKA
-            </span>
+          
           </Link>
 
           <Link

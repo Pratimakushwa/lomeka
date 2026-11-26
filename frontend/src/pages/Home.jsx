@@ -197,7 +197,7 @@ function WhyChooseLomeka() {
             Built for wholesale and custom apparel orders
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-muted sm:text-base">
-            Led by Ms. Neetu Kushwaha, LOMEKA manufactures and supplies bulk
+          LOMEKA manufactures and supplies bulk
             men’s and women’s wear from Kolar Road, Bhopal.
           </p>
         </div>

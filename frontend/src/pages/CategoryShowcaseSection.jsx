@@ -7,7 +7,7 @@ const LOMEKA_CATEGORIES = [
     number: '01',
     label: 'T-Shirts',
     slug: 't-shirts',
-    image: '/img5.png',
+    image: '/img77.png',
     alt: 'LOMEKA wholesale T-Shirts',
     tagline: 'Everyday essentials',
     detail:
@@ -17,7 +17,7 @@ const LOMEKA_CATEGORIES = [
     number: '02',
     label: 'Tracksuits',
     slug: 'tracksuits',
-    image: '/img99.png',
+    image: '/img45.png',
     alt: 'LOMEKA wholesale Tracksuits',
     tagline: 'Matching set styles',
     detail:
@@ -27,7 +27,7 @@ const LOMEKA_CATEGORIES = [
     number: '03',
     label: 'Hoodies & Jackets',
     slug: 'hoodies-jackets',
-    image: '/img6.png',
+    image: '/img89.png',
     alt: 'LOMEKA wholesale Hoodies and Jackets',
     tagline: 'Winter layering',
     detail:
@@ -37,7 +37,7 @@ const LOMEKA_CATEGORIES = [
     number: '04',
     label: 'Activewear',
     slug: 'activewear',
-    image: '/hero-closeup.png',
+    image: '/img67.png',
     alt: 'LOMEKA wholesale Activewear',
     tagline: 'Performance ready',
     detail:
@@ -47,7 +47,7 @@ const LOMEKA_CATEGORIES = [
     number: '05',
     label: 'Other',
     slug: 'other',
-    image: '/img55.png',
+    image: '/img64.png',
     alt: 'LOMEKA other wholesale apparel',
     tagline: 'Custom & seasonal',
     detail:
@@ -158,7 +158,7 @@ export default function CategoryShowcaseSection() {
   return (
     <section
       aria-labelledby="lomeka-showcase-heading"
-      className="relative overflow-hidden bg-[#0b1512] text-ivory"
+      className="relative overflow-x-clip bg-[#0b1512] text-ivory"
     >
       <div
         aria-hidden="true"
@@ -171,19 +171,19 @@ export default function CategoryShowcaseSection() {
 
       <div className="h-1 w-full bg-gold" />
 
-      <div className="relative mx-auto max-w-6xl px-5 pt-10 sm:px-8 sm:pt-14 lg:pt-16">
+      <div className="relative mx-auto max-w-6xl px-4 pt-9 sm:px-8 sm:pt-14 lg:pt-16">
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-[11px] font-bold tracking-[0.2em] text-gold uppercase">
             Signature wholesale categories
           </p>
           <h2
             id="lomeka-showcase-heading"
-            className="mt-3 font-display text-[clamp(1.65rem,4.2vw,2.75rem)] leading-[1.15] text-ivory"
+            className="mt-2.5 font-display text-[clamp(1.6rem,4.5vw,2.75rem)] leading-[1.15] text-ivory sm:mt-3"
           >
             Take your business to the next level with{' '}
             <span className="text-gold">LOMEKA</span>
           </h2>
-          <p className="mx-auto mt-3 max-w-2xl text-sm leading-relaxed text-ivory/70 sm:text-base">
+          <p className="mx-auto mt-2.5 max-w-2xl text-xs leading-relaxed text-ivory/70 sm:mt-3 sm:text-base">
             Choose a category to preview styles, then open the collection or
             request a bulk quote — made for wholesale buyers from our Bhopal
             unit.
@@ -194,17 +194,17 @@ export default function CategoryShowcaseSection() {
           Showing {activeItem.label}. {activeItem.detail}
         </p>
 
-        <div className="mt-8 grid items-start gap-6 pb-12 md:mt-12 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:gap-10 md:pb-16 lg:gap-14">
+        <div className="mt-7 grid min-w-0 grid-cols-1 items-start gap-6 pb-10 md:mt-12 md:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] md:gap-10 md:pb-16 lg:gap-14">
           {/* Stage first on mobile */}
-          <div className="relative order-1">
+          <div className="relative order-1 min-w-0">
             <div
-              className="relative mx-auto flex min-h-[300px] items-end justify-center overflow-hidden rounded-[var(--radius-card)] border border-ivory/10 bg-[#10241e] touch-pan-y sm:min-h-[380px] md:min-h-[460px]"
+              className="relative mx-auto flex min-h-[290px] w-full items-end justify-center overflow-hidden rounded-[var(--radius-card)] border border-ivory/10 bg-[#10241e] touch-pan-y sm:min-h-[380px] md:min-h-[460px]"
               onTouchStart={onStageTouchStart}
               onTouchEnd={onStageTouchEnd}
             >
               <span
                 aria-hidden="true"
-                className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[58%] select-none font-display text-[clamp(7rem,26vw,15rem)] leading-none font-bold tracking-tight"
+                className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[58%] select-none font-display text-[clamp(6.5rem,28vw,15rem)] leading-none font-bold tracking-tight"
                 style={{
                   color: 'transparent',
                   WebkitTextStroke: '1.5px rgba(184, 138, 80, 0.28)',
@@ -221,7 +221,7 @@ export default function CategoryShowcaseSection() {
               <a
                 href={collectionHref}
                 onClick={(event) => handleNavigate(event, collectionHref)}
-                className="group relative z-10 flex h-full w-full items-end justify-center px-4 pt-10 pb-14 focus-visible:outline-offset-[-6px] sm:pb-16"
+                className="group relative z-10 flex h-full w-full items-end justify-center px-2 pt-8 pb-14 focus-visible:outline-offset-[-6px] sm:px-4 sm:pt-10 sm:pb-16"
                 aria-label={`Open ${activeItem.label} collection`}
               >
                 <img
@@ -231,7 +231,7 @@ export default function CategoryShowcaseSection() {
                   loading="lazy"
                   decoding="async"
                   draggable="false"
-                  className={`h-[270px] w-auto max-w-[min(100%,19rem)] object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.55)] transition duration-500 group-hover:scale-[1.02] sm:h-[360px] md:h-[420px] ${
+                  className={`h-[250px] w-auto max-w-[min(100%,17.5rem)] object-contain object-bottom drop-shadow-[0_20px_40px_rgba(0,0,0,0.55)] transition duration-500 group-hover:scale-[1.02] sm:h-[350px] sm:max-w-[min(100%,19rem)] md:h-[420px] ${
                     prefersReducedMotion
                       ? ''
                       : 'motion-safe:animate-[showcaseFade_420ms_ease-out]'
@@ -239,12 +239,12 @@ export default function CategoryShowcaseSection() {
                 />
               </a>
 
-              <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex items-end justify-between gap-3 px-4 py-3.5 sm:px-5 sm:py-4">
+              <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex items-end justify-between gap-2 px-3.5 py-3 sm:gap-3 sm:px-5 sm:py-4">
                 <div className="min-w-0">
-                  <p className="text-[10px] font-bold tracking-[0.16em] text-gold uppercase">
+                  <p className="truncate text-[10px] font-bold tracking-[0.16em] text-gold uppercase">
                     {activeItem.tagline}
                   </p>
-                  <p className="mt-0.5 truncate font-display text-xl text-ivory sm:text-2xl">
+                  <p className="mt-0.5 truncate font-display text-lg text-ivory sm:text-2xl">
                     {activeItem.label}
                   </p>
                 </div>
@@ -256,22 +256,22 @@ export default function CategoryShowcaseSection() {
               <button
                 type="button"
                 onClick={goPrev}
-                className="absolute top-1/2 left-2 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-ivory/20 bg-navy/75 text-ivory shadow-lg backdrop-blur-sm transition hover:border-gold/50 hover:bg-navy hover:text-gold focus-visible:outline-offset-2 sm:left-3"
+                className="absolute top-1/2 left-2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-ivory/20 bg-navy/75 text-ivory shadow-lg backdrop-blur-sm transition hover:border-gold/50 hover:bg-navy hover:text-gold focus-visible:outline-offset-2 sm:left-3 sm:h-11 sm:w-11"
                 aria-label="Previous category"
               >
-                <ChevronLeft size={20} strokeWidth={1.8} aria-hidden="true" />
+                <ChevronLeft size={18} strokeWidth={1.8} aria-hidden="true" />
               </button>
               <button
                 type="button"
                 onClick={goNext}
-                className="absolute top-1/2 right-2 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-ivory/20 bg-navy/75 text-ivory shadow-lg backdrop-blur-sm transition hover:border-gold/50 hover:bg-navy hover:text-gold focus-visible:outline-offset-2 sm:right-3"
+                className="absolute top-1/2 right-2 z-30 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-ivory/20 bg-navy/75 text-ivory shadow-lg backdrop-blur-sm transition hover:border-gold/50 hover:bg-navy hover:text-gold focus-visible:outline-offset-2 sm:right-3 sm:h-11 sm:w-11"
                 aria-label="Next category"
               >
-                <ChevronRight size={20} strokeWidth={1.8} aria-hidden="true" />
+                <ChevronRight size={18} strokeWidth={1.8} aria-hidden="true" />
               </button>
             </div>
 
-            <div className="mt-4 flex flex-col items-center gap-2">
+            <div className="mt-3.5 flex flex-col items-center gap-2 sm:mt-4">
               <div
                 className="flex items-center justify-center gap-2"
                 role="group"
@@ -302,7 +302,7 @@ export default function CategoryShowcaseSection() {
           </div>
 
           {/* Single adaptive tablist + detail */}
-          <div className="order-2 flex flex-col">
+          <div className="order-2 flex min-w-0 flex-col">
             <p className="mb-2 text-[11px] font-bold tracking-[0.16em] text-gold/90 uppercase">
               Pick a category
             </p>
@@ -310,7 +310,7 @@ export default function CategoryShowcaseSection() {
             <div
               role="tablist"
               aria-label="LOMEKA wholesale categories"
-              className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1 [scrollbar-width:none] md:mx-0 md:flex-col md:gap-0 md:overflow-hidden md:rounded-[var(--radius-card)] md:border md:border-ivory/12 md:bg-ivory/[0.03] md:px-0 md:pb-0 [&::-webkit-scrollbar]:hidden"
+              className="flex max-w-full gap-2 overflow-x-auto pb-1.5 [scrollbar-width:none] md:flex-col md:gap-0 md:overflow-hidden md:rounded-[var(--radius-card)] md:border md:border-ivory/12 md:bg-ivory/[0.03] md:pb-0 [&::-webkit-scrollbar]:hidden"
             >
               {LOMEKA_CATEGORIES.map((item, index) => {
                 const isActive = index === activeIndex;
@@ -330,7 +330,7 @@ export default function CategoryShowcaseSection() {
                     tabIndex={isActive ? 0 : -1}
                     onClick={() => activate(index)}
                     onKeyDown={(event) => onTabKeyDown(event, index)}
-                    className={`relative min-h-11 shrink-0 rounded-full border px-4 py-2.5 text-left text-sm font-semibold whitespace-nowrap transition-colors focus-visible:outline-offset-2 md:flex md:w-full md:min-h-[3.25rem] md:items-center md:justify-between md:gap-3 md:rounded-none md:border-0 md:border-b md:border-ivory/10 md:px-5 md:py-3.5 md:text-base md:last:border-b-0 lg:text-lg ${
+                    className={`relative min-h-11 shrink-0 rounded-full border px-3.5 py-2 text-left text-xs font-semibold whitespace-nowrap transition-colors focus-visible:outline-offset-2 sm:px-4 sm:py-2.5 sm:text-sm md:flex md:w-full md:min-h-[3.25rem] md:items-center md:justify-between md:gap-3 md:rounded-none md:border-0 md:border-b md:border-ivory/10 md:px-5 md:py-3.5 md:text-base md:last:border-b-0 lg:text-lg ${
                       isActive
                         ? 'border-gold bg-gold text-navy md:bg-gold'
                         : 'border-ivory/20 bg-ivory/[0.04] text-ivory/85 hover:border-ivory/40 hover:text-ivory md:bg-transparent md:hover:bg-ivory/[0.06]'
@@ -373,7 +373,7 @@ export default function CategoryShowcaseSection() {
               id={`${baseId}-panel`}
               role="tabpanel"
               aria-labelledby={`${baseId}-tab-${activeItem.slug}`}
-              className="mt-5 rounded-[var(--radius-card)] border border-ivory/10 bg-ivory/[0.03] p-4 sm:p-5"
+              className="mt-4 min-w-0 rounded-[var(--radius-card)] border border-ivory/10 bg-ivory/[0.03] p-4 sm:mt-5 sm:p-5"
             >
               <p className="text-[11px] font-bold tracking-[0.16em] text-gold uppercase">
                 {activeItem.tagline}
@@ -381,11 +381,11 @@ export default function CategoryShowcaseSection() {
               <h3 className="mt-1 font-display text-xl text-ivory md:hidden">
                 {activeItem.label}
               </h3>
-              <p className="mt-2 text-sm leading-relaxed text-ivory/75 sm:text-[15px]">
+              <p className="mt-2 text-xs leading-relaxed text-ivory/75 sm:text-[15px]">
                 {activeItem.detail}
               </p>
 
-              <div className="mt-5 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <div className="mt-4 flex flex-col gap-2.5 sm:mt-5 sm:flex-row sm:flex-wrap sm:gap-3">
                 <a
                   href={collectionHref}
                   onClick={(event) => handleNavigate(event, collectionHref)}
@@ -453,5 +453,4 @@ export default function CategoryShowcaseSection() {
         }
       `}</style>
     </section>
-  );
-}
+  )};

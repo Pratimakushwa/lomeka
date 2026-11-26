@@ -1,12 +1,47 @@
+
+
 import { Link } from 'react-router-dom';
 import {
   Mail,
   MapPin,
-  Globe,
-  Share2,
   MessageCircle,
   ArrowUpRight,
 } from 'lucide-react';
+
+const envEmail = (import.meta.env.VITE_BUSINESS_EMAIL ?? '').trim();
+const envWhatsapp = (import.meta.env.VITE_WHATSAPP_NUMBER ?? '').trim();
+const instagramHandle = 'lomeka_fashionh';
+
+const emailHref = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(envEmail)
+  ? `mailto:${envEmail}`
+  : 'mailto:contact@lomeka.in';
+
+const whatsappHref = /^[1-9]\d{7,14}$/.test(envWhatsapp)
+  ? `https://wa.me/${envWhatsapp}`
+  : '/contact';
+
+const instagramHref = `https://www.instagram.com/${instagramHandle}/`;
+
+function InstagramIcon({ size = 16, className = '' }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className={className}
+    >
+      <rect x="2.5" y="2.5" width="19" height="19" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
 
 const exploreLinks = [
   { href: '/collections', label: 'All Collections' },
@@ -28,19 +63,24 @@ const assistanceLinks = [
 
 const connectLinks = [
   {
-    href: '/contact',
-    label: 'Wholesale Enquiry',
-    Icon: MessageCircle,
+    href: emailHref,
+    label: 'Email',
+    renderIcon: () => <Mail size={16} strokeWidth={1.75} aria-hidden="true" />,
+    external: false,
   },
   {
-    href: '/collections',
-    label: 'Browse Collections',
-    Icon: Globe,
+    href: whatsappHref,
+    label: 'WhatsApp',
+    renderIcon: () => (
+      <MessageCircle size={16} strokeWidth={1.75} aria-hidden="true" />
+    ),
+    external: whatsappHref.startsWith('http'),
   },
   {
-    href: '/about',
-    label: 'About LOMEKA',
-    Icon: Share2,
+    href: instagramHref,
+    label: `Instagram (@${instagramHandle})`,
+    renderIcon: () => <InstagramIcon size={16} />,
+    external: true,
   },
 ];
 
@@ -59,12 +99,12 @@ function FooterLinks({ id, title, links }) {
         className="mt-2 block h-px w-8 bg-[#123f32]/40"
       />
 
-      <ul className="mt-3.5 space-y-2">
+      <ul className="mt-3 space-y-1.5 sm:mt-3.5 sm:space-y-2">
         {links.map(({ href, label }) => (
           <li key={label}>
             <Link
               to={href}
-              className="group inline-flex items-start gap-1.5 text-[13px] leading-snug text-[#234536] underline-offset-4 transition-colors hover:text-[#082f24] hover:underline"
+              className="group inline-flex items-start gap-1.5 text-xs leading-snug text-[#234536] underline-offset-4 transition-colors hover:text-[#082f24] hover:underline sm:text-[13px]"
             >
               <span>{label}</span>
 
@@ -84,7 +124,7 @@ function FooterLinks({ id, title, links }) {
 export default function Footer() {
   return (
     <footer
-      className="relative isolate mt-8 overflow-hidden bg-[#e1be82] text-[#123f32]
+      className="relative isolate mt-6 overflow-hidden bg-[#e1be82] text-[#123f32] sm:mt-8
         [&_a:focus-visible]:rounded-sm
         [&_a:focus-visible]:outline-2
         [&_a:focus-visible]:outline-offset-4
@@ -106,7 +146,7 @@ export default function Footer() {
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
           preserveAspectRatio="none"
-          className="block h-5 w-full sm:h-7"
+          className="block h-4 w-full sm:h-7"
         >
           <path
             d="M0 0H1440V15C1170 62 1010 17 740 31C450 46 240 78 0 30V0Z"
@@ -125,50 +165,59 @@ export default function Footer() {
         </span>
       </div>
 
-      <div className="mx-auto max-w-[1440px] px-6 pt-6 sm:px-10 sm:pt-8 lg:px-12">
-        <div className="grid grid-cols-1 gap-7 pb-7 sm:grid-cols-2 sm:gap-x-8 sm:gap-y-8 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,0.9fr)] lg:gap-8 lg:pb-9">
+      <div className="mx-auto max-w-[1440px] px-4 pt-5 sm:px-10 sm:pt-8 lg:px-12">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-6 pb-6 sm:gap-x-8 sm:gap-y-8 sm:pb-7 lg:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)_minmax(0,1.15fr)_minmax(0,0.9fr)] lg:gap-8 lg:pb-9">
           {/* Brand and address */}
-          <div className="min-w-0">
+          <div className="col-span-2 min-w-0 sm:col-span-1">
             <Link
               to="/"
               aria-label="LOMEKA home"
               className="inline-block"
             >
-              <span className="block font-display text-[30px] leading-none tracking-[0.12em] text-[#123f32] sm:text-[34px]">
-                LOMEKA
-              </span>
+              <Link
+            to="/"
+            aria-label="LOMEKA Fashion home"
+            className="inline-flex items-center gap-3"
+          >
+            <img
+              src="/lomeka-logo.png"
+              alt="LOMEKA Fashion"
+              className="h-20 w-20 rounded-sm p-1 object-contain"
+            />
+          
+          </Link>
 
-              <span className="mt-1.5 block text-[9px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-[#234536]">
+              <span className="mt-1 block text-[9px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-[#234536] sm:mt-1.5">
                 MNF – Garment Manufacturing
               </span>
             </Link>
 
-            <p className="mt-3.5 max-w-sm text-[13px] leading-[1.65] text-[#234536]">
-              Led by Ms. Neetu Kushwaha, LOMEKA manufactures and supplies
+            <p className="mt-2.5 max-w-sm text-xs leading-[1.6] text-[#234536] sm:mt-3.5 sm:text-[13px] sm:leading-[1.65]">
+             LOMEKA manufactures and supplies
               all types of men’s and women’s T-shirts, lowers, hoodies,
               tracksuits and custom bulk designs.
             </p>
 
-            <div className="mt-4 space-y-2.5 border-t border-[#123f32]/15 pt-3.5">
+            <div className="mt-3.5 space-y-2 border-t border-[#123f32]/15 pt-3 sm:mt-4 sm:space-y-2.5 sm:pt-3.5">
               <a
-                href="mailto:contact@lomeka.in"
-                className="group flex w-fit max-w-full items-center gap-2.5 text-[13px] font-medium text-[#123f32]"
+                href={emailHref}
+                className="group flex w-fit max-w-full items-center gap-2 text-xs font-medium text-[#123f32] sm:gap-2.5 sm:text-[13px]"
               >
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#123f32]/15 bg-white/15">
                   <Mail size={13} aria-hidden="true" />
                 </span>
 
                 <span className="break-all underline-offset-4 group-hover:underline">
-                  contact@lomeka.in
+                  {envEmail || 'contact@lomeka.in'}
                 </span>
               </a>
 
-              <div className="flex items-start gap-2.5">
+              <div className="flex items-start gap-2 sm:gap-2.5">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#123f32]/15 bg-white/15">
                   <MapPin size={13} aria-hidden="true" />
                 </span>
 
-                <address className="max-w-xs text-xs not-italic leading-[1.6] text-[#234536]">
+                <address className="max-w-xs text-[11px] not-italic leading-[1.55] text-[#234536] sm:text-xs sm:leading-[1.6]">
                   Shop No. 2, C-385, Udayanchal Nagar,
                   Near Amarnath Temple, Kolar Road,
                   Bhopal, Madhya Pradesh – 462042
@@ -191,8 +240,8 @@ export default function Footer() {
             links={assistanceLinks}
           />
 
-          {/* Connect */}
-          <div className="min-w-0">
+          {/* Connect — Email, WhatsApp, Instagram */}
+          <div className="col-span-2 min-w-0 sm:col-span-1">
             <h2 className="!font-body text-[11px] font-bold uppercase tracking-[0.18em] text-[#123f32]">
               Connect
             </h2>
@@ -202,29 +251,43 @@ export default function Footer() {
               className="mt-2 block h-px w-8 bg-[#123f32]/40"
             />
 
-            <p className="mt-3.5 max-w-xs text-[13px] leading-[1.65] text-[#234536]">
+            <p className="mt-2.5 max-w-xs text-xs leading-[1.6] text-[#234536] sm:mt-3.5 sm:text-[13px] sm:leading-[1.65]">
               Connect with LOMEKA for wholesale catalogue updates and bulk
               enquiries.
             </p>
 
-            <div className="mt-3.5 flex flex-wrap gap-2">
-              {connectLinks.map(({ href, label, Icon }) => (
-                <Link
-                  key={label}
-                  to={href}
-                  aria-label={label}
-                  title={label}
-                  className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#123f32]/25 bg-white/15 text-[#123f32] transition-colors duration-200 hover:border-[#123f32] hover:bg-[#123f32] hover:text-[#fffaf1]"
-                >
-                  <Icon size={15} strokeWidth={1.6} aria-hidden="true" />
-                </Link>
-              ))}
+            <div className="mt-3 flex flex-wrap items-center gap-2.5 sm:mt-3.5">
+              {connectLinks.map(({ href, label, renderIcon, external }) =>
+                href.startsWith('http') || href.startsWith('mailto:') ? (
+                  <a
+                    key={label}
+                    href={href}
+                    target={external ? '_blank' : undefined}
+                    rel={external ? 'noopener noreferrer' : undefined}
+                    aria-label={label}
+                    title={label}
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#123f32]/30 bg-white/25 text-[#123f32] shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#123f32] hover:bg-[#123f32] hover:text-[#fffaf1]"
+                  >
+                    {renderIcon()}
+                  </a>
+                ) : (
+                  <Link
+                    key={label}
+                    to={href}
+                    aria-label={label}
+                    title={label}
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#123f32]/30 bg-white/25 text-[#123f32] shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#123f32] hover:bg-[#123f32] hover:text-[#fffaf1]"
+                  >
+                    {renderIcon()}
+                  </Link>
+                ),
+              )}
             </div>
           </div>
         </div>
 
         {/* Bottom bar */}
-        <div className="flex flex-col gap-3 border-t border-[#123f32]/20 py-4 text-[10px] font-medium uppercase tracking-[0.1em] text-[#234536] sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2.5 border-t border-[#123f32]/20 py-3.5 text-[10px] font-medium uppercase tracking-[0.1em] text-[#234536] sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:py-4">
           <p className="leading-relaxed">
             © {new Date().getFullYear()} LOMEKA. All rights reserved.
           </p>
