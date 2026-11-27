@@ -1,6 +1,25 @@
+
+
 // const express = require('express');
 // const mongoose = require('mongoose');
 // const Product = require('../models/Product');
+
+// const ALLOWED_GENDERS = ['Men', 'Women', 'Unisex'];
+
+// function normalizeGender(val, fallback = 'Men') {
+//   if (typeof val !== 'string' || !val.trim()) return fallback;
+//   const clean = val.trim().toLowerCase();
+//   if (clean === 'men' || clean === 'male') return 'Men';
+//   if (clean === 'women' || clean === 'female') return 'Women';
+//   if (clean === 'unisex') return 'Unisex';
+//   return fallback;
+// }
+
+// function parseOptionalPositiveNumber(val) {
+//   if (val === null || val === undefined || val === '') return null;
+//   const num = Number(val);
+//   return Number.isFinite(num) && num > 0 ? num : null;
+// }
 
 // function normalizeImagePayload(body = {}, existing = null) {
 //   const list = [];
@@ -25,7 +44,11 @@
 //         list.push(clean);
 //       }
 //     }
-//   } else if (!Object.hasOwn(body, 'imageUrl') && !Object.hasOwn(body, 'secondaryImageUrl') && Array.isArray(existing?.images)) {
+//   } else if (
+//     !Object.hasOwn(body, 'imageUrl') &&
+//     !Object.hasOwn(body, 'secondaryImageUrl') &&
+//     Array.isArray(existing?.images)
+//   ) {
 //     for (const img of existing.images) {
 //       if (img && !list.includes(img)) {
 //         list.push(img);
@@ -76,6 +99,7 @@
 //     try {
 //       const {
 //         title,
+//         gender,
 //         category,
 //         fabric,
 //         gsm,
@@ -91,21 +115,29 @@
 //         });
 //       }
 
-//       const parsedMoq = Number(moq);
-//       const parsedPrice = Number(pricePerUnit);
+//       const parsedMoq = parseOptionalPositiveNumber(moq);
+//       const parsedPrice = parseOptionalPositiveNumber(pricePerUnit);
 //       const imgData = normalizeImagePayload(req.body || {});
+//       const cleanGender = normalizeGender(gender, 'Men');
+
+//       if (!ALLOWED_GENDERS.includes(cleanGender)) {
+//         return res.status(400).json({
+//           success: false,
+//           message: 'Invalid collection/gender selection.',
+//         });
+//       }
 
 //       const product = await Product.create({
 //         title: title.trim(),
+//         gender: cleanGender,
 //         category:
 //           typeof category === 'string' && category.trim()
 //             ? category.trim()
 //             : 'T-Shirts',
 //         fabric: typeof fabric === 'string' ? fabric.trim() : '',
 //         gsm: typeof gsm === 'string' ? gsm.trim() : '',
-//         moq: Number.isFinite(parsedMoq) && parsedMoq >= 1 ? parsedMoq : 50,
-//         pricePerUnit:
-//           Number.isFinite(parsedPrice) && parsedPrice >= 0 ? parsedPrice : 0,
+//         moq: parsedMoq,
+//         pricePerUnit: parsedPrice,
 //         imageUrl: imgData.imageUrl,
 //         secondaryImageUrl: imgData.secondaryImageUrl,
 //         images: imgData.images,
@@ -155,6 +187,10 @@
 //         updates.title = body.title.trim();
 //       }
 
+//       if (Object.hasOwn(body, 'gender')) {
+//         updates.gender = normalizeGender(body.gender, existing.gender || 'Men');
+//       }
+
 //       if (Object.hasOwn(body, 'category') && typeof body.category === 'string') {
 //         updates.category = body.category.trim();
 //       }
@@ -168,25 +204,11 @@
 //       }
 
 //       if (Object.hasOwn(body, 'moq')) {
-//         const parsedMoq = Number(body.moq);
-//         if (!Number.isFinite(parsedMoq) || parsedMoq < 1) {
-//           return res.status(400).json({
-//             success: false,
-//             message: 'MOQ must be at least 1.',
-//           });
-//         }
-//         updates.moq = parsedMoq;
+//         updates.moq = parseOptionalPositiveNumber(body.moq);
 //       }
 
 //       if (Object.hasOwn(body, 'pricePerUnit')) {
-//         const parsedPrice = Number(body.pricePerUnit);
-//         if (!Number.isFinite(parsedPrice) || parsedPrice < 0) {
-//           return res.status(400).json({
-//             success: false,
-//             message: 'Rate cannot be negative.',
-//           });
-//         }
-//         updates.pricePerUnit = parsedPrice;
+//         updates.pricePerUnit = parseOptionalPositiveNumber(body.pricePerUnit);
 //       }
 
 //       if (
@@ -208,7 +230,7 @@
 //         req.params.id,
 //         { $set: updates },
 //         {
-//           new: true,
+//           returnDocument: 'after',
 //           runValidators: true,
 //         },
 //       );
@@ -256,9 +278,59 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
-const Product = require('../models/Product');
+const importedProduct = require('../models/Product');
 
 const ALLOWED_GENDERS = ['Men', 'Women', 'Unisex'];
+
+const fallbackProductSchema = new mongoose.Schema(
+  {
+    title: { type: String, required: true, trim: true, maxlength: 140 },
+    gender: {
+      type: String,
+      trim: true,
+      enum: ['Men', 'Women', 'Unisex'],
+      default: 'Men',
+    },
+    category: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 80,
+      default: 'T-Shirts',
+    },
+    fit: {
+      type: String,
+      trim: true,
+      maxlength: 50,
+      default: 'Regular',
+    },
+    fabric: { type: String, trim: true, maxlength: 100, default: '' },
+    gsm: { type: String, trim: true, maxlength: 40, default: '' },
+    moq: { type: Number, min: 1, default: null },
+    pricePerUnit: { type: Number, min: 0, default: null },
+    imageUrl: { type: String, trim: true, default: '' },
+    secondaryImageUrl: { type: String, trim: true, default: '' },
+    images: { type: [String], default: [] },
+    isActive: { type: Boolean, default: true },
+  },
+  { timestamps: true },
+);
+
+function getProductModel() {
+  if (typeof importedProduct?.create === 'function') {
+    return importedProduct;
+  }
+  if (importedProduct?.modelName && typeof importedProduct.find === 'function') {
+    return importedProduct;
+  }
+  if (mongoose.models.Product) {
+    return mongoose.models.Product;
+  }
+  if (importedProduct instanceof mongoose.Schema) {
+    return mongoose.model('Product', importedProduct);
+  }
+  return mongoose.model('Product', fallbackProductSchema);
+}
 
 function normalizeGender(val, fallback = 'Men') {
   if (typeof val !== 'string' || !val.trim()) return fallback;
@@ -326,6 +398,7 @@ function createProductRouter(requireAdmin) {
   // Public catalog: active products; admin with ?all=true: all products
   router.get('/', async (req, res, next) => {
     try {
+      const Product = getProductModel();
       const wantsAll = req.query.all === 'true';
 
       if (wantsAll) {
@@ -351,10 +424,12 @@ function createProductRouter(requireAdmin) {
   // Admin: create product
   router.post('/', requireAdmin, async (req, res, next) => {
     try {
+      const Product = getProductModel();
       const {
         title,
         gender,
         category,
+        fit,
         fabric,
         gsm,
         moq,
@@ -388,6 +463,7 @@ function createProductRouter(requireAdmin) {
           typeof category === 'string' && category.trim()
             ? category.trim()
             : 'T-Shirts',
+        fit: typeof fit === 'string' && fit.trim() ? fit.trim() : 'Regular',
         fabric: typeof fabric === 'string' ? fabric.trim() : '',
         gsm: typeof gsm === 'string' ? gsm.trim() : '',
         moq: parsedMoq,
@@ -403,7 +479,7 @@ function createProductRouter(requireAdmin) {
       if (error.name === 'ValidationError') {
         return res.status(400).json({
           success: false,
-          message: 'Invalid product details.',
+          message: error.message || 'Invalid product details.',
         });
       }
       next(error);
@@ -413,6 +489,8 @@ function createProductRouter(requireAdmin) {
   // Admin: edit / update product
   router.patch('/:id', requireAdmin, async (req, res, next) => {
     try {
+      const Product = getProductModel();
+
       if (!mongoose.isValidObjectId(req.params.id)) {
         return res.status(400).json({
           success: false,
@@ -446,7 +524,17 @@ function createProductRouter(requireAdmin) {
       }
 
       if (Object.hasOwn(body, 'category') && typeof body.category === 'string') {
-        updates.category = body.category.trim();
+        const cleanCategory = body.category.trim();
+        if (cleanCategory) {
+          updates.category = cleanCategory;
+        }
+      }
+
+      if (Object.hasOwn(body, 'fit') && typeof body.fit === 'string') {
+        const cleanFit = body.fit.trim();
+        if (cleanFit) {
+          updates.fit = cleanFit;
+        }
       }
 
       if (Object.hasOwn(body, 'fabric') && typeof body.fabric === 'string') {
@@ -494,7 +582,7 @@ function createProductRouter(requireAdmin) {
       if (error.name === 'ValidationError') {
         return res.status(400).json({
           success: false,
-          message: 'Invalid update data.',
+          message: error.message || 'Invalid update data.',
         });
       }
       next(error);
@@ -504,6 +592,8 @@ function createProductRouter(requireAdmin) {
   // Admin: delete product
   router.delete('/:id', requireAdmin, async (req, res, next) => {
     try {
+      const Product = getProductModel();
+
       if (!mongoose.isValidObjectId(req.params.id)) {
         return res.status(400).json({
           success: false,

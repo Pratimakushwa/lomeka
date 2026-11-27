@@ -122,7 +122,6 @@
 //     </>
 //   );
 // }
-
 import { useEffect } from 'react';
 import { Link, Outlet, Route, Routes, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
@@ -207,6 +206,12 @@ function DocumentMeta() {
   const meta = pageMeta[pathname];
 
   useEffect(() => {
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+  }, []);
+
+  useEffect(() => {
     document.title = isAdminPage
       ? 'Admin | LOMEKA Fashion'
       : meta?.title ?? 'Page Not Found | LOMEKA Fashion';
@@ -220,9 +225,25 @@ function DocumentMeta() {
     const sectionId = hash.slice(1);
     if (sectionId) {
       document.getElementById(sectionId)?.scrollIntoView();
-    } else {
-      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+      return;
     }
+
+    const html = document.documentElement;
+    const prevScrollBehavior = html.style.scrollBehavior;
+    html.style.scrollBehavior = 'auto';
+    window.scrollTo(0, 0);
+    document.body.scrollTop = 0;
+    html.scrollTop = 0;
+
+    const rafId = requestAnimationFrame(() => {
+      window.scrollTo(0, 0);
+      html.scrollBehavior = prevScrollBehavior;
+    });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      html.style.scrollBehavior = prevScrollBehavior;
+    };
   }, [pathname, hash, isAdminPage, meta]);
 
   return null;

@@ -171,29 +171,22 @@
 //           <div className="col-span-2 min-w-0 sm:col-span-1">
 //             <Link
 //               to="/"
-//               aria-label="LOMEKA home"
-//               className="inline-block"
+//               aria-label="LOMEKA Fashion home"
+//               className="inline-flex items-center gap-3"
 //             >
-//               <Link
-//             to="/"
-//             aria-label="LOMEKA Fashion home"
-//             className="inline-flex items-center gap-3"
-//           >
-//             <img
-//               src="/lomeka-logo.png"
-//               alt="LOMEKA Fashion"
-//               className="h-20 w-20 rounded-sm p-1 object-contain"
-//             />
-          
-//           </Link>
-
-//               <span className="mt-1 block text-[9px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-[#234536] sm:mt-1.5">
-//                 MNF – Garment Manufacturing
-//               </span>
+//               <img
+//                 src="/lomeka-logo.png"
+//                 alt="LOMEKA Fashion"
+//                 className="h-20 w-20 rounded-sm p-1 object-contain"
+//               />
 //             </Link>
 
+//             <span className="mt-1 block text-[9px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-[#234536] sm:mt-1.5">
+//               MNF – Garment Manufacturing
+//             </span>
+
 //             <p className="mt-2.5 max-w-sm text-xs leading-[1.6] text-[#234536] sm:mt-3.5 sm:text-[13px] sm:leading-[1.65]">
-//              LOMEKA manufactures and supplies
+//               LOMEKA manufactures and supplies
 //               all types of men’s and women’s T-shirts, lowers, hoodies,
 //               tracksuits and custom bulk designs.
 //             </p>
@@ -408,14 +401,14 @@ function FooterLinks({ id, title, links }) {
     <nav aria-labelledby={id} className="min-w-0">
       <h2
         id={id}
-        className="!font-body text-[11px] font-bold uppercase tracking-[0.18em] text-[#123f32]"
+        className="!font-body text-[11px] font-bold uppercase tracking-[0.18em] text-[#3b185f]"
       >
         {title}
       </h2>
 
       <span
         aria-hidden="true"
-        className="mt-2 block h-px w-8 bg-[#123f32]/40"
+        className="mt-2 block h-px w-8 bg-[#3b185f]/40"
       />
 
       <ul className="mt-3 space-y-1.5 sm:mt-3.5 sm:space-y-2">
@@ -423,7 +416,7 @@ function FooterLinks({ id, title, links }) {
           <li key={label}>
             <Link
               to={href}
-              className="group inline-flex items-start gap-1.5 text-xs leading-snug text-[#234536] underline-offset-4 transition-colors hover:text-[#082f24] hover:underline sm:text-[13px]"
+              className="group inline-flex items-start gap-1.5 text-xs leading-snug text-[#49256e] underline-offset-4 transition-colors hover:text-[#230b3c] hover:underline sm:text-[13px]"
             >
               <span>{label}</span>
 
@@ -443,16 +436,16 @@ function FooterLinks({ id, title, links }) {
 export default function Footer() {
   return (
     <footer
-      className="relative isolate mt-6 overflow-hidden bg-[#e1be82] text-[#123f32] sm:mt-8
+      className="relative isolate mt-6 overflow-hidden bg-[#dfc9f2] text-[#3b185f] sm:mt-8
         [&_a:focus-visible]:rounded-sm
         [&_a:focus-visible]:outline-2
         [&_a:focus-visible]:outline-offset-4
-        [&_a:focus-visible]:outline-[#123f32]"
+        [&_a:focus-visible]:outline-[#3b185f]"
     >
       {/* Soft background detail */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.24),transparent_65%)]"
+        className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_top_left,rgba(255,255,255,0.34),transparent_65%)]"
       />
 
       {/* Curved top edge */}
@@ -479,7 +472,7 @@ export default function Footer() {
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 bottom-8 -z-10 flex select-none justify-center overflow-hidden"
       >
-        <span className="whitespace-nowrap font-display text-[clamp(4.5rem,16vw,15rem)] leading-none tracking-[0.12em] text-[#123f32]/[0.045]">
+        <span className="whitespace-nowrap font-display text-[clamp(4.5rem,16vw,15rem)] leading-none tracking-[0.12em] text-[#3b185f]/[0.05]">
           LOMEKA
         </span>
       </div>
@@ -494,28 +487,28 @@ export default function Footer() {
               className="inline-flex items-center gap-3"
             >
               <img
-                src="/lomeka-logo.png"
+                src="/logo.png"
                 alt="LOMEKA Fashion"
                 className="h-20 w-20 rounded-sm p-1 object-contain"
               />
             </Link>
 
-            <span className="mt-1 block text-[9px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-[#234536] sm:mt-1.5">
+            <span className="mt-1 block text-[9px] font-semibold uppercase leading-relaxed tracking-[0.16em] text-[#49256e] sm:mt-1.5">
               MNF – Garment Manufacturing
             </span>
 
-            <p className="mt-2.5 max-w-sm text-xs leading-[1.6] text-[#234536] sm:mt-3.5 sm:text-[13px] sm:leading-[1.65]">
+            <p className="mt-2.5 max-w-sm text-xs leading-[1.6] text-[#49256e] sm:mt-3.5 sm:text-[13px] sm:leading-[1.65]">
               LOMEKA manufactures and supplies
               all types of men’s and women’s T-shirts, lowers, hoodies,
               tracksuits and custom bulk designs.
             </p>
 
-            <div className="mt-3.5 space-y-2 border-t border-[#123f32]/15 pt-3 sm:mt-4 sm:space-y-2.5 sm:pt-3.5">
+            <div className="mt-3.5 space-y-2 border-t border-[#3b185f]/15 pt-3 sm:mt-4 sm:space-y-2.5 sm:pt-3.5">
               <a
                 href={emailHref}
-                className="group flex w-fit max-w-full items-center gap-2 text-xs font-medium text-[#123f32] sm:gap-2.5 sm:text-[13px]"
+                className="group flex w-fit max-w-full items-center gap-2 text-xs font-medium text-[#3b185f] sm:gap-2.5 sm:text-[13px]"
               >
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#123f32]/15 bg-white/15">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#3b185f]/15 bg-white/25">
                   <Mail size={13} aria-hidden="true" />
                 </span>
 
@@ -525,11 +518,11 @@ export default function Footer() {
               </a>
 
               <div className="flex items-start gap-2 sm:gap-2.5">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#123f32]/15 bg-white/15">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#3b185f]/15 bg-white/25">
                   <MapPin size={13} aria-hidden="true" />
                 </span>
 
-                <address className="max-w-xs text-[11px] not-italic leading-[1.55] text-[#234536] sm:text-xs sm:leading-[1.6]">
+                <address className="max-w-xs text-[11px] not-italic leading-[1.55] text-[#49256e] sm:text-xs sm:leading-[1.6]">
                   Shop No. 2, C-385, Udayanchal Nagar,
                   Near Amarnath Temple, Kolar Road,
                   Bhopal, Madhya Pradesh – 462042
@@ -554,16 +547,19 @@ export default function Footer() {
 
           {/* Connect — Email, WhatsApp, Instagram */}
           <div className="col-span-2 min-w-0 sm:col-span-1">
-            <h2 className="!font-body text-[11px] font-bold uppercase tracking-[0.18em] text-[#123f32]">
+            <h2
+              id="footer-connect-heading"
+              className="!font-body text-[11px] font-bold uppercase tracking-[0.18em] text-[#3b185f]"
+            >
               Connect
             </h2>
 
             <span
               aria-hidden="true"
-              className="mt-2 block h-px w-8 bg-[#123f32]/40"
+              className="mt-2 block h-px w-8 bg-[#3b185f]/40"
             />
 
-            <p className="mt-2.5 max-w-xs text-xs leading-[1.6] text-[#234536] sm:mt-3.5 sm:text-[13px] sm:leading-[1.65]">
+            <p className="mt-2.5 max-w-xs text-xs leading-[1.6] text-[#49256e] sm:mt-3.5 sm:text-[13px] sm:leading-[1.65]">
               Connect with LOMEKA for wholesale catalogue updates and bulk
               enquiries.
             </p>
@@ -578,7 +574,7 @@ export default function Footer() {
                     rel={external ? 'noopener noreferrer' : undefined}
                     aria-label={label}
                     title={label}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#123f32]/30 bg-white/25 text-[#123f32] shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#123f32] hover:bg-[#123f32] hover:text-[#fffaf1]"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#3b185f]/30 bg-white/30 text-[#3b185f] shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#3b185f] hover:bg-[#3b185f] hover:text-[#faf7fd]"
                   >
                     {renderIcon()}
                   </a>
@@ -588,7 +584,7 @@ export default function Footer() {
                     to={href}
                     aria-label={label}
                     title={label}
-                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#123f32]/30 bg-white/25 text-[#123f32] shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#123f32] hover:bg-[#123f32] hover:text-[#fffaf1]"
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#3b185f]/30 bg-white/30 text-[#3b185f] shadow-2xs transition-all duration-200 hover:-translate-y-0.5 hover:border-[#3b185f] hover:bg-[#3b185f] hover:text-[#faf7fd]"
                   >
                     {renderIcon()}
                   </Link>
@@ -599,7 +595,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="flex flex-col gap-2.5 border-t border-[#123f32]/20 py-3.5 text-[10px] font-medium uppercase tracking-[0.1em] text-[#234536] sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:py-4">
+        <div className="flex flex-col gap-2.5 border-t border-[#3b185f]/20 py-3.5 text-[10px] font-medium uppercase tracking-[0.1em] text-[#49256e] sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:py-4">
           <p className="leading-relaxed">
             © {new Date().getFullYear()} LOMEKA. All rights reserved.
           </p>
@@ -609,7 +605,7 @@ export default function Footer() {
               <li>
                 <Link
                   to="/about"
-                  className="underline-offset-4 transition-colors hover:text-[#082f24] hover:underline"
+                  className="underline-offset-4 transition-colors hover:text-[#230b3c] hover:underline"
                 >
                   About Us
                 </Link>
@@ -618,7 +614,7 @@ export default function Footer() {
               <li>
                 <Link
                   to="/contact"
-                  className="underline-offset-4 transition-colors hover:text-[#082f24] hover:underline"
+                  className="underline-offset-4 transition-colors hover:text-[#230b3c] hover:underline"
                 >
                   Contact Us
                 </Link>

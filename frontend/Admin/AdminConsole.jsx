@@ -631,7 +631,7 @@ export default function AdminConsole() {
             className="inline-flex items-center gap-3"
           >
             <img
-              src="/lomeka-logo.png"
+              src="/logo.png"
               alt="LOMEKA Fashion"
               className="h-20 w-20 rounded-sm p-1 object-contain"
             />

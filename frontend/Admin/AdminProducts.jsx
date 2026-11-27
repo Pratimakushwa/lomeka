@@ -1,3 +1,5 @@
+
+
 // import { useEffect, useMemo, useState } from 'react';
 
 // const API_URL = (
@@ -7,11 +9,12 @@
 
 // const INITIAL_FORM = {
 //   title: '',
+//   gender: 'Men',
 //   category: 'T-Shirts',
 //   fabric: '',
 //   gsm: '',
-//   moq: '50',
- 
+//   moq: '',
+//   pricePerUnit: '',
 //   imageUrl: '',
 //   secondaryImageUrl: '',
 //   isActive: true,
@@ -20,7 +23,13 @@
 // const NAV_GROUPS = [
 //   {
 //     label: 'OVERVIEW',
-//     items: [{ id: 'dashboard', label: 'Dashboard', path: '/admin/dashboard' }],
+//     items: [
+//       {
+//         id: 'dashboard',
+//         label: 'Dashboard',
+//         path: '/admin/dashboard',
+//       },
+//     ],
 //   },
 //   {
 //     label: 'COMMERCE',
@@ -31,43 +40,91 @@
 //         path: '/admin/orders',
 //         badge: 'Bulk',
 //       },
-//       { id: 'products', label: 'Products', path: '/admin/products' },
-//       { id: 'buyers', label: 'Buyers', path: '/admin/buyers' },
-//       { id: 'rate-slabs', label: 'Rate Slabs', path: '/admin/rate-slabs' },
-//       { id: 'samples', label: 'Samples', path: '/admin/samples' },
-//       { id: 'enquiries', label: 'Enquiries', path: '/admin/enquiries' },
+//       {
+//         id: 'products',
+//         label: 'Products',
+//         path: '/admin/products',
+//       },
+//       {
+//         id: 'buyers',
+//         label: 'Buyers',
+//         path: '/admin/buyers',
+//       },
+//       {
+//         id: 'rate-slabs',
+//         label: 'Rate Slabs',
+//         path: '/admin/rate-slabs',
+//       },
+//       {
+//         id: 'samples',
+//         label: 'Samples',
+//         path: '/admin/samples',
+//       },
+//       {
+//         id: 'enquiries',
+//         label: 'Enquiries',
+//         path: '/admin/enquiries',
+//       },
 //     ],
 //   },
 //   {
 //     label: 'REWARDS',
 //     items: [
-//       { id: 'analytics', label: 'Analytics', path: '/admin/analytics' },
-//       { id: 'settings', label: 'Settings', path: '/admin/settings' },
+//       {
+//         id: 'analytics',
+//         label: 'Analytics',
+//         path: '/admin/analytics',
+//       },
+//       {
+//         id: 'settings',
+//         label: 'Settings',
+//         path: '/admin/settings',
+//       },
 //     ],
 //   },
 // ];
 
 // function resolveActiveTab(currentPath) {
 //   const clean = (currentPath || '/admin/products').replace(/\/+$/, '');
-//   if (clean === '/admin' || clean === '/admin/login') return 'products';
+
+//   if (clean === '/admin' || clean === '/admin/login') {
+//     return 'products';
+//   }
+
 //   const matched = NAV_GROUPS.flatMap((g) => g.items).find(
 //     (item) => item.path === clean,
 //   );
+
 //   return matched ? matched.id : 'products';
 // }
 
 // function getProductImages(product) {
 //   const list = [];
-//   if (product?.imageUrl) list.push(product.imageUrl);
-//   if (product?.secondaryImageUrl && !list.includes(product.secondaryImageUrl)) {
+
+//   if (product?.imageUrl) {
+//     list.push(product.imageUrl);
+//   }
+
+//   if (
+//     product?.secondaryImageUrl &&
+//     !list.includes(product.secondaryImageUrl)
+//   ) {
 //     list.push(product.secondaryImageUrl);
 //   }
+
 //   if (Array.isArray(product?.images)) {
 //     for (const img of product.images) {
-//       if (img && !list.includes(img)) list.push(img);
+//       if (img && !list.includes(img)) {
+//         list.push(img);
+//       }
 //     }
 //   }
+
 //   return list.slice(0, 2);
+// }
+
+// function hasOptionalValue(val) {
+//   return val !== null && val !== undefined && String(val).trim() !== '' && Number(val) > 0;
 // }
 
 // export default function AdminProducts({
@@ -84,6 +141,7 @@
 //   const [products, setProducts] = useState([]);
 //   const [loading, setLoading] = useState(true);
 //   const [search, setSearch] = useState('');
+//   const [genderFilter, setGenderFilter] = useState('All Genders');
 //   const [categoryFilter, setCategoryFilter] = useState('All Categories');
 //   const [viewMode, setViewMode] = useState('grid');
 //   const [collapsed, setCollapsed] = useState(false);
@@ -111,6 +169,7 @@
 //         credentials: 'include',
 //         signal,
 //       });
+
 //       const data = await res.json().catch(() => null);
 
 //       if (!res.ok || data?.success === false) {
@@ -124,6 +183,7 @@
 //           : Array.isArray(data)
 //             ? data
 //             : [];
+
 //       setProducts(list);
 //     } catch (err) {
 //       if (err.name !== 'AbortError') {
@@ -140,25 +200,36 @@
 
 //   useEffect(() => {
 //     const controller = new AbortController();
+
 //     loadProducts(controller.signal);
+
 //     return () => controller.abort();
 //   }, []);
 
 //   const filteredProducts = useMemo(() => {
 //     const q = search.trim().toLowerCase();
+
 //     return products.filter((p) => {
+//       const matchesGender =
+//         genderFilter === 'All Genders' ||
+//         (p.gender || '').toLowerCase() === genderFilter.toLowerCase();
+
 //       const matchesCategory =
-//         categoryFilter === 'All Categories' || p.category === categoryFilter;
-//       if (!matchesCategory) return false;
+//         categoryFilter === 'All Categories' ||
+//         p.category === categoryFilter;
+
+//       if (!matchesGender || !matchesCategory) return false;
 //       if (!q) return true;
+
 //       return (
 //         p.title?.toLowerCase().includes(q) ||
+//         p.gender?.toLowerCase().includes(q) ||
 //         p.category?.toLowerCase().includes(q) ||
 //         p.fabric?.toLowerCase().includes(q) ||
 //         p.gsm?.toLowerCase().includes(q)
 //       );
 //     });
-//   }, [products, search, categoryFilter]);
+//   }, [products, search, genderFilter, categoryFilter]);
 
 //   function openCreateModal() {
 //     setEditingId(null);
@@ -169,18 +240,25 @@
 
 //   function openEditModal(product) {
 //     const imgs = getProductImages(product);
+
 //     setEditingId(product._id || product.id);
 //     setError('');
+
 //     setForm({
 //       title: product.title || '',
+//       gender: product.gender || 'Men',
 //       category: product.category || 'T-Shirts',
 //       fabric: product.fabric || '',
 //       gsm: product.gsm || '',
-//       moq: String(product.moq ?? 50),
+//       moq: hasOptionalValue(product.moq) ? String(product.moq) : '',
+//       pricePerUnit: hasOptionalValue(product.pricePerUnit)
+//         ? String(product.pricePerUnit)
+//         : '',
 //       imageUrl: imgs[0] || '',
 //       secondaryImageUrl: imgs[1] || '',
 //       isActive: product.isActive !== false,
 //     });
+
 //     setShowModal(true);
 //   }
 
@@ -191,6 +269,7 @@
 
 //   function handleChange(e) {
 //     const { name, value, type, checked } = e.target;
+
 //     setForm((prev) => ({
 //       ...prev,
 //       [name]: type === 'checkbox' ? checked : value,
@@ -199,6 +278,7 @@
 
 //   function readImageField(e, fieldName) {
 //     const file = e.target.files?.[0];
+
 //     if (!file) return;
 
 //     if (!file.type.startsWith('image/')) {
@@ -207,23 +287,32 @@
 //     }
 
 //     if (file.size > 1.5 * 1024 * 1024) {
-//       setError('Each image should be under 1.5 MB so both images save smoothly.');
+//       setError(
+//         'Each image should be under 1.5 MB so both images save smoothly.',
+//       );
 //       return;
 //     }
 
 //     setError('');
+
 //     const reader = new FileReader();
+
 //     reader.onload = () => {
 //       if (typeof reader.result === 'string') {
-//         setForm((prev) => ({ ...prev, [fieldName]: reader.result }));
+//         setForm((prev) => ({
+//           ...prev,
+//           [fieldName]: reader.result,
+//         }));
 //       }
 //     };
+
 //     reader.readAsDataURL(file);
 //     e.target.value = '';
 //   }
 
 //   async function handleSubmit(e) {
 //     e.preventDefault();
+
 //     if (busy) return;
 
 //     setBusy?.(true);
@@ -231,18 +320,27 @@
 //     setNotice('');
 
 //     const primary = form.imageUrl || form.secondaryImageUrl || '';
+
 //     const secondary =
 //       form.secondaryImageUrl && form.secondaryImageUrl !== primary
 //         ? form.secondaryImageUrl
 //         : '';
+
 //     const images = [primary, secondary].filter(Boolean);
+
+//     const parsedMoq = hasOptionalValue(form.moq) ? Number(form.moq) : null;
+//     const parsedPrice = hasOptionalValue(form.pricePerUnit)
+//       ? Number(form.pricePerUnit)
+//       : null;
 
 //     const payload = {
 //       title: form.title,
+//       gender: form.gender,
 //       category: form.category,
 //       fabric: form.fabric,
 //       gsm: form.gsm,
-//       moq: Number(form.moq) || 50,
+//       moq: parsedMoq,
+//       pricePerUnit: parsedPrice,
 //       imageUrl: primary,
 //       secondaryImageUrl: secondary,
 //       images,
@@ -253,12 +351,15 @@
 //       const url = editingId
 //         ? `${API_URL}/api/products/${editingId}`
 //         : `${API_URL}/api/products`;
+
 //       const method = editingId ? 'PATCH' : 'POST';
 
 //       const res = await fetch(url, {
 //         method,
 //         credentials: 'include',
-//         headers: { 'Content-Type': 'application/json' },
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
 //         body: JSON.stringify(payload),
 //       });
 
@@ -274,10 +375,20 @@
 //       }
 
 //       const rawSaved = data?.product || data?.data || {};
+
 //       const savedProduct = {
 //         ...payload,
 //         ...rawSaved,
-//         _id: rawSaved._id || rawSaved.id || editingId || `local-${Date.now()}`,
+//         _id:
+//           rawSaved._id ||
+//           rawSaved.id ||
+//           editingId ||
+//           `local-${Date.now()}`,
+//         gender: rawSaved.gender || payload.gender,
+//         moq: hasOptionalValue(rawSaved.moq) ? Number(rawSaved.moq) : parsedMoq,
+//         pricePerUnit: hasOptionalValue(rawSaved.pricePerUnit)
+//           ? Number(rawSaved.pricePerUnit)
+//           : parsedPrice,
 //         imageUrl: rawSaved.imageUrl || primary,
 //         secondaryImageUrl:
 //           rawSaved.secondaryImageUrl ||
@@ -292,9 +403,12 @@
 //       if (editingId) {
 //         setProducts((prev) =>
 //           prev.map((item) =>
-//             (item._id || item.id) === editingId ? savedProduct : item,
+//             (item._id || item.id) === editingId
+//               ? savedProduct
+//               : item,
 //           ),
 //         );
+
 //         setNotice('Product updated with images.');
 //       } else {
 //         setProducts((prev) => [savedProduct, ...prev]);
@@ -324,10 +438,14 @@
 
 //     try {
 //       const targetId = product._id || product.id;
-//       const res = await fetch(`${API_URL}/api/products/${targetId}`, {
-//         method: 'DELETE',
-//         credentials: 'include',
-//       });
+
+//       const res = await fetch(
+//         `${API_URL}/api/products/${targetId}`,
+//         {
+//           method: 'DELETE',
+//           credentials: 'include',
+//         },
+//       );
 
 //       const data = await res.json().catch(() => null);
 
@@ -338,6 +456,7 @@
 //       setProducts((prev) =>
 //         prev.filter((item) => (item._id || item.id) !== targetId),
 //       );
+
 //       setNotice(`Deleted "${product.title}".`);
 //     } catch (err) {
 //       setError(err.message);
@@ -347,15 +466,18 @@
 //   }
 
 //   const profileName = adminEmail?.split('@')[0] || 'Admin';
+
 //   const todayLabel = new Date().toLocaleDateString('en-IN', {
 //     weekday: 'short',
 //     day: '2-digit',
 //     month: 'short',
 //     year: 'numeric',
 //   });
+
 //   const activeTabLabel =
-//     NAV_GROUPS.flatMap((g) => g.items).find((item) => item.id === activeTab)
-//       ?.label || 'Products';
+//     NAV_GROUPS.flatMap((g) => g.items).find(
+//       (item) => item.id === activeTab,
+//     )?.label || 'Products';
 
 //   const inventoryContent = (
 //     <>
@@ -382,8 +504,9 @@
 //           <h2 className="font-display text-2xl font-bold text-navy sm:text-3xl">
 //             Product Inventory
 //           </h2>
+
 //           <p className="mt-0.5 text-xs text-muted">
-//             Manage your T-shirts, tracksuits, GSM specs, and bulk rates
+//             Manage your Men, Women & Unisex T-shirts, tracksuits, and GSM specs
 //           </p>
 //         </div>
 
@@ -402,12 +525,23 @@
 //             type="search"
 //             value={search}
 //             onChange={(e) => setSearch(e.target.value)}
-//             placeholder="Search products by name, fabric, or GSM..."
+//             placeholder="Search products by name, gender, fabric, or GSM..."
 //             className="w-full rounded-md border border-[#c5a059]/35 bg-white px-3.5 py-2 text-xs text-navy outline-none focus:border-navy"
 //           />
 //         </div>
 
-//         <div className="flex items-center gap-2">
+//         <div className="flex flex-wrap items-center gap-2">
+//           <select
+//             value={genderFilter}
+//             onChange={(e) => setGenderFilter(e.target.value)}
+//             className="rounded-md border border-[#c5a059]/35 bg-white px-3 py-2 text-xs font-medium text-navy outline-none focus:border-navy"
+//           >
+//             <option value="All Genders">All Genders</option>
+//             <option value="Men">Men</option>
+//             <option value="Women">Women</option>
+//             <option value="Unisex">Unisex</option>
+//           </select>
+
 //           <select
 //             value={categoryFilter}
 //             onChange={(e) => setCategoryFilter(e.target.value)}
@@ -433,6 +567,7 @@
 //             >
 //               Grid
 //             </button>
+
 //             <button
 //               type="button"
 //               onClick={() => setViewMode('list')}
@@ -455,6 +590,7 @@
 //           <p className="text-sm font-medium text-navy">
 //             No products added yet.
 //           </p>
+
 //           <button
 //             type="button"
 //             onClick={openCreateModal}
@@ -467,6 +603,9 @@
 //         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
 //           {filteredProducts.map((product, idx) => {
 //             const imgs = getProductImages(product);
+//             const showMoq = hasOptionalValue(product.moq);
+//             const showPrice = hasOptionalValue(product.pricePerUnit);
+
 //             return (
 //               <article
 //                 key={product._id || product.id || idx}
@@ -513,18 +652,24 @@
 //                     <h3 className="line-clamp-1 text-sm font-bold text-navy">
 //                       {product.title}
 //                     </h3>
+
 //                     <span className="shrink-0 rounded border border-[#c5a059]/30 bg-[#f8f4ee] px-2 py-0.5 text-[10px] font-medium text-navy">
-//                       {product.category}
+//                       {[product.gender, product.category]
+//                         .filter(Boolean)
+//                         .join(' · ')}
 //                     </span>
 //                   </div>
 
 //                   <p className="mt-0.5 line-clamp-1 text-[11px] text-muted">
-//                     {product.fabric || 'Factory Fabric'} • MOQ {product.moq} pcs
+//                     {product.fabric || 'Factory Fabric'}
+//                     {showMoq && <> • MOQ {product.moq} pcs</>}
 //                   </p>
 
-//                   {/* <p className="mt-2.5 text-sm font-bold text-navy">
-//                     ₹{product.pricePerUnit}
-//                   </p> */}
+//                   {showPrice && (
+//                     <p className="mt-2 text-sm font-bold text-navy">
+//                       ₹{product.pricePerUnit}/pc
+//                     </p>
+//                   )}
 //                 </div>
 
 //                 <div className="mt-3 flex items-center gap-2 border-t border-[#c5a059]/20 pt-2.5">
@@ -556,7 +701,7 @@
 //             <thead>
 //               <tr className="border-b border-[#c5a059]/25 bg-[#f8f4ee] text-[11px] uppercase tracking-wider text-muted">
 //                 <th className="py-3 px-4">Product</th>
-//                 <th className="py-3 px-4">Category</th>
+//                 <th className="py-3 px-4">Gender / Category</th>
 //                 <th className="py-3 px-4">Fabric / GSM</th>
 //                 <th className="py-3 px-4">MOQ</th>
 //                 <th className="py-3 px-4">Rate</th>
@@ -564,22 +709,38 @@
 //                 <th className="py-3 px-4 text-right">Actions</th>
 //               </tr>
 //             </thead>
+
 //             <tbody className="divide-y divide-[#c5a059]/15">
 //               {filteredProducts.map((product, idx) => (
 //                 <tr key={product._id || product.id || idx}>
 //                   <td className="py-3 px-4 font-semibold text-navy">
 //                     {product.title}
 //                   </td>
-//                   <td className="py-3 px-4">{product.category}</td>
+
+//                   <td className="py-3 px-4">
+//                     {[product.gender, product.category]
+//                       .filter(Boolean)
+//                       .join(' · ')}
+//                   </td>
+
 //                   <td className="py-3 px-4 text-muted">
 //                     {[product.fabric, product.gsm]
 //                       .filter(Boolean)
 //                       .join(' • ') || '—'}
 //                   </td>
-//                   <td className="py-3 px-4">{product.moq} pcs</td>
-//                   {/* <td className="py-3 px-4 font-bold text-navy">
-//                     ₹{product.pricePerUnit}
-//                   </td> */}
+
+//                   <td className="py-3 px-4">
+//                     {hasOptionalValue(product.moq)
+//                       ? `${product.moq} pcs`
+//                       : '—'}
+//                   </td>
+
+//                   <td className="py-3 px-4 font-bold text-navy">
+//                     {hasOptionalValue(product.pricePerUnit)
+//                       ? `₹${product.pricePerUnit}/pc`
+//                       : '—'}
+//                   </td>
+
 //                   <td className="py-3 px-4">
 //                     <span
 //                       className={`rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
@@ -591,6 +752,7 @@
 //                       {product.isActive ? 'Active' : 'Draft'}
 //                     </span>
 //                   </td>
+
 //                   <td className="py-3 px-4 text-right">
 //                     <div className="inline-flex items-center gap-2">
 //                       <button
@@ -601,6 +763,7 @@
 //                       >
 //                         Edit
 //                       </button>
+
 //                       <button
 //                         type="button"
 //                         disabled={busy}
@@ -630,12 +793,16 @@
 //         <div className="mb-4 flex items-center justify-between border-b border-[#c5a059]/20 pb-3">
 //           <div>
 //             <h3 className="font-display text-xl font-bold text-navy">
-//               {editingId ? 'Edit Factory Product' : 'Add Factory Product'}
+//               {editingId
+//                 ? 'Edit Factory Product'
+//                 : 'Add Factory Product'}
 //             </h3>
+
 //             <p className="text-xs text-muted">
 //               Upload main & hover product images and fill manufacturing specs
 //             </p>
 //           </div>
+
 //           <button
 //             type="button"
 //             onClick={closeModal}
@@ -660,6 +827,7 @@
 //               <label className="block text-xs font-semibold text-navy">
 //                 Product Title *
 //               </label>
+
 //               <input
 //                 name="title"
 //                 type="text"
@@ -674,27 +842,43 @@
 
 //             <div>
 //               <label className="block text-xs font-semibold text-navy">
-//                 Category
+//                 Collection / For
 //               </label>
+
 //               <select
-//                 name="category"
-//                 value={form.category}
+//                 name="gender"
+//                 value={form.gender}
 //                 onChange={handleChange}
 //                 disabled={busy}
 //                 className="mt-1 w-full rounded-md border border-[#c5a059]/35 bg-[#fcfaf7] px-3 py-2 text-sm text-navy outline-none focus:border-navy"
 //               >
-//                 <option value="T-Shirts">T-Shirts</option>
-//                 <option value="Tracksuits">Tracksuits</option>
-//                 <option value="Hoodies & Jackets">Hoodies & Jackets</option>
-//                 <option value="Activewear">Activewear</option>
-//                 <option value="Other">Other</option>
+//                 <option value="Men">Men</option>
+//                 <option value="Women">Women</option>
+//                 <option value="Unisex">Unisex</option>
 //               </select>
+//             </div>
+
+//             <div>
+//               <label className="block text-xs font-semibold text-navy">
+//                 Category
+//               </label>
+
+//               <input
+//                 name="category"
+//                 type="text"
+//                 value={form.category}
+//                 onChange={handleChange}
+//                 disabled={busy}
+//                 placeholder="T-Shirts / Tracksuits"
+//                 className="mt-1 w-full rounded-md border border-[#c5a059]/35 bg-[#fcfaf7] px-3 py-2 text-sm text-navy outline-none focus:border-navy"
+//               />
 //             </div>
 
 //             <div>
 //               <label className="block text-xs font-semibold text-navy">
 //                 GSM
 //               </label>
+
 //               <input
 //                 name="gsm"
 //                 type="text"
@@ -710,6 +894,7 @@
 //               <label className="block text-xs font-semibold text-navy">
 //                 Fabric
 //               </label>
+
 //               <input
 //                 name="fabric"
 //                 type="text"
@@ -723,13 +908,14 @@
 
 //             <div>
 //               <label className="block text-xs font-semibold text-navy">
-//                 MOQ (Pieces)
+//                 MOQ (Pieces) — Optional
 //               </label>
+
 //               <input
 //                 name="moq"
 //                 type="number"
 //                 min="1"
-//                 required
+//                 placeholder="Optional"
 //                 value={form.moq}
 //                 onChange={handleChange}
 //                 disabled={busy}
@@ -737,28 +923,29 @@
 //               />
 //             </div>
 
-//             {/* <div>
+//             <div>
 //               <label className="block text-xs font-semibold text-navy">
-//                 Rate per Piece (₹)
+//                 Rate per Piece (₹) — Optional
 //               </label>
+
 //               <input
 //                 name="pricePerUnit"
 //                 type="number"
-//                 min="0"
+//                 min="1"
 //                 step="0.01"
-//                 required
-//                 placeholder="299"
+//                 placeholder="Optional"
 //                 value={form.pricePerUnit}
 //                 onChange={handleChange}
 //                 disabled={busy}
 //                 className="mt-1 w-full rounded-md border border-[#c5a059]/35 bg-[#fcfaf7] px-3 py-2 text-sm text-navy outline-none focus:border-navy"
 //               />
-//             </div> */}
+//             </div>
 
 //             <div>
 //               <label className="block text-xs font-semibold text-navy">
 //                 Image 1 — Main View
 //               </label>
+
 //               <input
 //                 type="file"
 //                 accept="image/*"
@@ -772,10 +959,13 @@
 //               <label className="block text-xs font-semibold text-navy">
 //                 Image 2 — Hover View (Changes on Hover)
 //               </label>
+
 //               <input
 //                 type="file"
 //                 accept="image/*"
-//                 onChange={(e) => readImageField(e, 'secondaryImageUrl')}
+//                 onChange={(e) =>
+//                   readImageField(e, 'secondaryImageUrl')
+//                 }
 //                 disabled={busy}
 //                 className="mt-1 w-full rounded-md border border-[#c5a059]/35 bg-[#fcfaf7] px-2.5 py-1.5 text-xs text-navy file:mr-3 file:rounded file:border-0 file:bg-navy file:px-3 file:py-1 file:text-xs file:font-semibold file:text-[#f8f4ee]"
 //               />
@@ -792,14 +982,19 @@
 //                       alt="Main preview"
 //                       className="h-12 w-12 rounded object-cover"
 //                     />
+
 //                     <span className="text-xs font-medium text-navy">
 //                       Main Image
 //                     </span>
 //                   </div>
+
 //                   <button
 //                     type="button"
 //                     onClick={() =>
-//                       setForm((prev) => ({ ...prev, imageUrl: '' }))
+//                       setForm((prev) => ({
+//                         ...prev,
+//                         imageUrl: '',
+//                       }))
 //                     }
 //                     className="text-xs font-semibold text-rose-600 hover:underline"
 //                   >
@@ -816,14 +1011,19 @@
 //                       alt="Hover preview"
 //                       className="h-12 w-12 rounded object-cover"
 //                     />
+
 //                     <span className="text-xs font-medium text-navy">
 //                       Hover Image
 //                     </span>
 //                   </div>
+
 //                   <button
 //                     type="button"
 //                     onClick={() =>
-//                       setForm((prev) => ({ ...prev, secondaryImageUrl: '' }))
+//                       setForm((prev) => ({
+//                         ...prev,
+//                         secondaryImageUrl: '',
+//                       }))
 //                     }
 //                     className="text-xs font-semibold text-rose-600 hover:underline"
 //                   >
@@ -855,6 +1055,7 @@
 //               >
 //                 Cancel
 //               </button>
+
 //               <button
 //                 type="submit"
 //                 disabled={busy}
@@ -895,6 +1096,7 @@
 //               <span className="flex h-8 w-8 items-center justify-center rounded border border-[#c5a059]/50 bg-[#c5a059]/15 font-display text-sm font-bold text-[#e2c275]">
 //                 L
 //               </span>
+
 //               {!collapsed && (
 //                 <div className="leading-none">
 //                   <span className="block font-display text-base tracking-wider text-[#f8f4ee]">
@@ -926,6 +1128,7 @@
 //                 <ul className="space-y-1">
 //                   {group.items.map((item) => {
 //                     const isActive = activeTab === item.id;
+
 //                     return (
 //                       <li key={item.id}>
 //                         <a
@@ -941,8 +1144,11 @@
 //                           }`}
 //                         >
 //                           <span className="truncate">
-//                             {collapsed ? item.label.slice(0, 2) : item.label}
+//                             {collapsed
+//                               ? item.label.slice(0, 2)
+//                               : item.label}
 //                           </span>
+
 //                           {!collapsed && item.badge && (
 //                             <span className="rounded-full bg-[#c5a059] px-2 py-0.5 text-[10px] font-bold text-[#0b132b]">
 //                               {item.badge}
@@ -964,7 +1170,9 @@
 //             onClick={() => setCollapsed((c) => !c)}
 //             className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-xs text-slate-400 hover:bg-white/5 hover:text-[#f8f4ee]"
 //           >
-//             <span>{collapsed ? '→ Expand' : '‹ Collapse'}</span>
+//             <span>
+//               {collapsed ? '→ Expand' : '‹ Collapse'}
+//             </span>
 //           </button>
 
 //           <button
@@ -973,7 +1181,13 @@
 //             onClick={onLogout}
 //             className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-xs font-medium text-rose-400 hover:bg-rose-500/10 disabled:opacity-50"
 //           >
-//             <span>{collapsed ? 'Out' : busy ? 'Signing out…' : 'Logout'}</span>
+//             <span>
+//               {collapsed
+//                 ? 'Out'
+//                 : busy
+//                   ? 'Signing out…'
+//                   : 'Logout'}
+//             </span>
 //           </button>
 //         </div>
 //       </aside>
@@ -982,9 +1196,15 @@
 //         <header className="flex flex-wrap items-center justify-between gap-4 border-b border-[#c5a059]/25 bg-white px-6 py-3">
 //           <div>
 //             <p className="text-[11px] text-muted">
-//               Admin › <span className="text-navy">{activeTabLabel}</span>
+//               Admin ›{' '}
+//               <span className="text-navy">
+//                 {activeTabLabel}
+//               </span>
 //             </p>
-//             <h1 className="text-lg font-bold text-navy">{activeTabLabel}</h1>
+
+//             <h1 className="text-lg font-bold text-navy">
+//               {activeTabLabel}
+//             </h1>
 //           </div>
 
 //           <div className="flex items-center gap-4">
@@ -1003,15 +1223,22 @@
 //               <div className="flex h-8 w-8 items-center justify-center rounded-full border border-[#c5a059]/50 bg-[#f8f4ee] text-xs font-bold text-navy">
 //                 {profileName.slice(0, 1).toUpperCase()}
 //               </div>
+
 //               <div className="leading-tight">
-//                 <p className="text-xs font-semibold text-navy">{profileName}</p>
-//                 <p className="text-[11px] text-muted">Admin</p>
+//                 <p className="text-xs font-semibold text-navy">
+//                   {profileName}
+//                 </p>
+//                 <p className="text-[11px] text-muted">
+//                   Admin
+//                 </p>
 //               </div>
 //             </div>
 //           </div>
 //         </header>
 
-//         <main className="flex-1 p-6">{inventoryContent}</main>
+//         <main className="flex-1 p-6">
+//           {inventoryContent}
+//         </main>
 //       </div>
 
 //       {modalNode}
@@ -1025,14 +1252,32 @@ const API_URL = (
   (import.meta.env.DEV ? 'http://localhost:5000' : '')
 ).replace(/\/+$/, '');
 
+const CATEGORY_SUGGESTIONS = [
+  'T-Shirts',
+  'Polo T-Shirts',
+  'Shirts',
+  'Lowers & Joggers',
+  'Shorts',
+  'Tracksuits',
+  'Hoodies',
+  'Sweatshirts',
+  'Jackets',
+  'Hoodies & Jackets',
+  'Activewear',
+  'Co-ord Sets',
+  'Nightwear & Pyjamas',
+  'Other',
+];
+
+const GENDER_OPTIONS = ['Men', 'Women'];
+
+const FIT_OPTIONS = ['Regular', 'Oversized', 'Fitted', 'Boxy'];
+
 const INITIAL_FORM = {
   title: '',
   gender: 'Men',
   category: 'T-Shirts',
-  fabric: '',
-  gsm: '',
-  moq: '',
-  pricePerUnit: '',
+  fit: 'Regular',
   imageUrl: '',
   secondaryImageUrl: '',
   isActive: true,
@@ -1141,10 +1386,6 @@ function getProductImages(product) {
   return list.slice(0, 2);
 }
 
-function hasOptionalValue(val) {
-  return val !== null && val !== undefined && String(val).trim() !== '' && Number(val) > 0;
-}
-
 export default function AdminProducts({
   adminEmail,
   currentPath = '/admin/products',
@@ -1160,7 +1401,7 @@ export default function AdminProducts({
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [genderFilter, setGenderFilter] = useState('All Genders');
-  const [categoryFilter, setCategoryFilter] = useState('All Categories');
+  const [categoryFilter, setCategoryFilter] = useState('');
   const [viewMode, setViewMode] = useState('grid');
   const [collapsed, setCollapsed] = useState(false);
   const [showModal, setShowModal] = useState(false);
@@ -1226,6 +1467,7 @@ export default function AdminProducts({
 
   const filteredProducts = useMemo(() => {
     const q = search.trim().toLowerCase();
+    const catQ = categoryFilter.trim().toLowerCase();
 
     return products.filter((p) => {
       const matchesGender =
@@ -1233,8 +1475,7 @@ export default function AdminProducts({
         (p.gender || '').toLowerCase() === genderFilter.toLowerCase();
 
       const matchesCategory =
-        categoryFilter === 'All Categories' ||
-        p.category === categoryFilter;
+        !catQ || (p.category || '').toLowerCase().includes(catQ);
 
       if (!matchesGender || !matchesCategory) return false;
       if (!q) return true;
@@ -1243,8 +1484,7 @@ export default function AdminProducts({
         p.title?.toLowerCase().includes(q) ||
         p.gender?.toLowerCase().includes(q) ||
         p.category?.toLowerCase().includes(q) ||
-        p.fabric?.toLowerCase().includes(q) ||
-        p.gsm?.toLowerCase().includes(q)
+        p.fit?.toLowerCase().includes(q)
       );
     });
   }, [products, search, genderFilter, categoryFilter]);
@@ -1258,20 +1498,23 @@ export default function AdminProducts({
 
   function openEditModal(product) {
     const imgs = getProductImages(product);
+    const matchedGender =
+      GENDER_OPTIONS.find(
+        (g) => g.toLowerCase() === (product.gender || '').toLowerCase(),
+      ) || 'Men';
+    const matchedFit =
+      FIT_OPTIONS.find(
+        (f) => f.toLowerCase() === (product.fit || '').toLowerCase(),
+      ) || 'Regular';
 
     setEditingId(product._id || product.id);
     setError('');
 
     setForm({
       title: product.title || '',
-      gender: product.gender || 'Men',
+      gender: matchedGender,
       category: product.category || 'T-Shirts',
-      fabric: product.fabric || '',
-      gsm: product.gsm || '',
-      moq: hasOptionalValue(product.moq) ? String(product.moq) : '',
-      pricePerUnit: hasOptionalValue(product.pricePerUnit)
-        ? String(product.pricePerUnit)
-        : '',
+      fit: matchedFit,
       imageUrl: imgs[0] || '',
       secondaryImageUrl: imgs[1] || '',
       isActive: product.isActive !== false,
@@ -1346,19 +1589,11 @@ export default function AdminProducts({
 
     const images = [primary, secondary].filter(Boolean);
 
-    const parsedMoq = hasOptionalValue(form.moq) ? Number(form.moq) : null;
-    const parsedPrice = hasOptionalValue(form.pricePerUnit)
-      ? Number(form.pricePerUnit)
-      : null;
-
     const payload = {
-      title: form.title,
+      title: form.title.trim(),
       gender: form.gender,
-      category: form.category,
-      fabric: form.fabric,
-      gsm: form.gsm,
-      moq: parsedMoq,
-      pricePerUnit: parsedPrice,
+      category: form.category.trim() || 'T-Shirts',
+      fit: form.fit,
       imageUrl: primary,
       secondaryImageUrl: secondary,
       images,
@@ -1403,10 +1638,8 @@ export default function AdminProducts({
           editingId ||
           `local-${Date.now()}`,
         gender: rawSaved.gender || payload.gender,
-        moq: hasOptionalValue(rawSaved.moq) ? Number(rawSaved.moq) : parsedMoq,
-        pricePerUnit: hasOptionalValue(rawSaved.pricePerUnit)
-          ? Number(rawSaved.pricePerUnit)
-          : parsedPrice,
+        category: rawSaved.category || payload.category,
+        fit: rawSaved.fit || payload.fit,
         imageUrl: rawSaved.imageUrl || primary,
         secondaryImageUrl:
           rawSaved.secondaryImageUrl ||
@@ -1421,16 +1654,14 @@ export default function AdminProducts({
       if (editingId) {
         setProducts((prev) =>
           prev.map((item) =>
-            (item._id || item.id) === editingId
-              ? savedProduct
-              : item,
+            (item._id || item.id) === editingId ? savedProduct : item,
           ),
         );
 
-        setNotice('Product updated with images.');
+        setNotice('Product updated for Collection card.');
       } else {
         setProducts((prev) => [savedProduct, ...prev]);
-        setNotice('Product added with images.');
+        setNotice('Product added for Collection card.');
       }
 
       setForm(INITIAL_FORM);
@@ -1457,13 +1688,10 @@ export default function AdminProducts({
     try {
       const targetId = product._id || product.id;
 
-      const res = await fetch(
-        `${API_URL}/api/products/${targetId}`,
-        {
-          method: 'DELETE',
-          credentials: 'include',
-        },
-      );
+      const res = await fetch(`${API_URL}/api/products/${targetId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
 
       const data = await res.json().catch(() => null);
 
@@ -1524,7 +1752,7 @@ export default function AdminProducts({
           </h2>
 
           <p className="mt-0.5 text-xs text-muted">
-            Manage your Men, Women & Unisex T-shirts, tracksuits, and GSM specs
+            Manage only the details shown on Collection cards and images
           </p>
         </div>
 
@@ -1543,7 +1771,7 @@ export default function AdminProducts({
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search products by name, gender, fabric, or GSM..."
+            placeholder="Search products by title, collection, category, or fit..."
             className="w-full rounded-md border border-[#c5a059]/35 bg-white px-3.5 py-2 text-xs text-navy outline-none focus:border-navy"
           />
         </div>
@@ -1555,23 +1783,20 @@ export default function AdminProducts({
             className="rounded-md border border-[#c5a059]/35 bg-white px-3 py-2 text-xs font-medium text-navy outline-none focus:border-navy"
           >
             <option value="All Genders">All Genders</option>
-            <option value="Men">Men</option>
-            <option value="Women">Women</option>
-            <option value="Unisex">Unisex</option>
+            {GENDER_OPTIONS.map((gender) => (
+              <option key={gender} value={gender}>
+                {gender}
+              </option>
+            ))}
           </select>
 
-          <select
+          <input
+            type="text"
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="rounded-md border border-[#c5a059]/35 bg-white px-3 py-2 text-xs font-medium text-navy outline-none focus:border-navy"
-          >
-            <option value="All Categories">All Categories</option>
-            <option value="T-Shirts">T-Shirts</option>
-            <option value="Tracksuits">Tracksuits</option>
-            <option value="Hoodies & Jackets">Hoodies & Jackets</option>
-            <option value="Activewear">Activewear</option>
-            <option value="Other">Other</option>
-          </select>
+            placeholder="Filter category..."
+            className="w-40 rounded-md border border-[#c5a059]/35 bg-white px-3 py-2 text-xs font-medium text-navy outline-none focus:border-navy"
+          />
 
           <div className="flex overflow-hidden rounded-md border border-[#c5a059]/35 bg-white">
             <button
@@ -1621,8 +1846,6 @@ export default function AdminProducts({
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {filteredProducts.map((product, idx) => {
             const imgs = getProductImages(product);
-            const showMoq = hasOptionalValue(product.moq);
-            const showPrice = hasOptionalValue(product.pricePerUnit);
 
             return (
               <article
@@ -1631,12 +1854,6 @@ export default function AdminProducts({
               >
                 <div>
                   <div className="relative mb-3 flex h-48 items-center justify-center overflow-hidden rounded-lg bg-[#f8f4ee]">
-                    {product.gsm && (
-                      <span className="absolute top-2.5 left-2.5 z-10 rounded-full bg-[#c5a059] px-2.5 py-0.5 text-[10px] font-bold text-[#0b132b]">
-                        {product.gsm}
-                      </span>
-                    )}
-
                     <span
                       className={`absolute top-2.5 right-2.5 z-10 rounded-full px-2.5 py-0.5 text-[10px] font-semibold ${
                         product.isActive
@@ -1672,22 +1889,15 @@ export default function AdminProducts({
                     </h3>
 
                     <span className="shrink-0 rounded border border-[#c5a059]/30 bg-[#f8f4ee] px-2 py-0.5 text-[10px] font-medium text-navy">
-                      {[product.gender, product.category]
+                      {[product.gender, product.fit]
                         .filter(Boolean)
                         .join(' · ')}
                     </span>
                   </div>
 
                   <p className="mt-0.5 line-clamp-1 text-[11px] text-muted">
-                    {product.fabric || 'Factory Fabric'}
-                    {showMoq && <> • MOQ {product.moq} pcs</>}
+                    {product.category || 'T-Shirts'}
                   </p>
-
-                  {showPrice && (
-                    <p className="mt-2 text-sm font-bold text-navy">
-                      ₹{product.pricePerUnit}/pc
-                    </p>
-                  )}
                 </div>
 
                 <div className="mt-3 flex items-center gap-2 border-t border-[#c5a059]/20 pt-2.5">
@@ -1719,10 +1929,8 @@ export default function AdminProducts({
             <thead>
               <tr className="border-b border-[#c5a059]/25 bg-[#f8f4ee] text-[11px] uppercase tracking-wider text-muted">
                 <th className="py-3 px-4">Product</th>
-                <th className="py-3 px-4">Gender / Category</th>
-                <th className="py-3 px-4">Fabric / GSM</th>
-                <th className="py-3 px-4">MOQ</th>
-                <th className="py-3 px-4">Rate</th>
+                <th className="py-3 px-4">Collection / Fit</th>
+                <th className="py-3 px-4">Category</th>
                 <th className="py-3 px-4">Status</th>
                 <th className="py-3 px-4 text-right">Actions</th>
               </tr>
@@ -1736,27 +1944,11 @@ export default function AdminProducts({
                   </td>
 
                   <td className="py-3 px-4">
-                    {[product.gender, product.category]
-                      .filter(Boolean)
-                      .join(' · ')}
+                    {[product.gender, product.fit].filter(Boolean).join(' · ')}
                   </td>
 
                   <td className="py-3 px-4 text-muted">
-                    {[product.fabric, product.gsm]
-                      .filter(Boolean)
-                      .join(' • ') || '—'}
-                  </td>
-
-                  <td className="py-3 px-4">
-                    {hasOptionalValue(product.moq)
-                      ? `${product.moq} pcs`
-                      : '—'}
-                  </td>
-
-                  <td className="py-3 px-4 font-bold text-navy">
-                    {hasOptionalValue(product.pricePerUnit)
-                      ? `₹${product.pricePerUnit}/pc`
-                      : '—'}
+                    {product.category || 'T-Shirts'}
                   </td>
 
                   <td className="py-3 px-4">
@@ -1811,13 +2003,11 @@ export default function AdminProducts({
         <div className="mb-4 flex items-center justify-between border-b border-[#c5a059]/20 pb-3">
           <div>
             <h3 className="font-display text-xl font-bold text-navy">
-              {editingId
-                ? 'Edit Factory Product'
-                : 'Add Factory Product'}
+              {editingId ? 'Edit Factory Product' : 'Add Factory Product'}
             </h3>
 
             <p className="text-xs text-muted">
-              Upload main & hover product images and fill manufacturing specs
+              Only the details shown on Collection cards and product images
             </p>
           </div>
 
@@ -1850,7 +2040,7 @@ export default function AdminProducts({
                 name="title"
                 type="text"
                 required
-                placeholder="240 GSM Oversized Cotton Tee"
+                placeholder="Men's Windcheater Jacket"
                 value={form.title}
                 onChange={handleChange}
                 disabled={busy}
@@ -1870,9 +2060,11 @@ export default function AdminProducts({
                 disabled={busy}
                 className="mt-1 w-full rounded-md border border-[#c5a059]/35 bg-[#fcfaf7] px-3 py-2 text-sm text-navy outline-none focus:border-navy"
               >
-                <option value="Men">Men</option>
-                <option value="Women">Women</option>
-                <option value="Unisex">Unisex</option>
+                {GENDER_OPTIONS.map((gender) => (
+                  <option key={gender} value={gender}>
+                    {gender}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -1884,79 +2076,38 @@ export default function AdminProducts({
               <input
                 name="category"
                 type="text"
+                list="admin-category-suggestions"
+                placeholder="T-Shirts, Tracksuits, Co-ord Sets..."
                 value={form.category}
                 onChange={handleChange}
                 disabled={busy}
-                placeholder="T-Shirts / Tracksuits"
                 className="mt-1 w-full rounded-md border border-[#c5a059]/35 bg-[#fcfaf7] px-3 py-2 text-sm text-navy outline-none focus:border-navy"
               />
+              <datalist id="admin-category-suggestions">
+                {CATEGORY_SUGGESTIONS.map((category) => (
+                  <option key={category} value={category} />
+                ))}
+              </datalist>
             </div>
 
-            <div>
+            <div className="sm:col-span-2">
               <label className="block text-xs font-semibold text-navy">
-                GSM
+                Fit
               </label>
 
-              <input
-                name="gsm"
-                type="text"
-                placeholder="240 GSM / 320 GSM"
-                value={form.gsm}
+              <select
+                name="fit"
+                value={form.fit}
                 onChange={handleChange}
                 disabled={busy}
                 className="mt-1 w-full rounded-md border border-[#c5a059]/35 bg-[#fcfaf7] px-3 py-2 text-sm text-navy outline-none focus:border-navy"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-navy">
-                Fabric
-              </label>
-
-              <input
-                name="fabric"
-                type="text"
-                placeholder="Combed Cotton / Fleece"
-                value={form.fabric}
-                onChange={handleChange}
-                disabled={busy}
-                className="mt-1 w-full rounded-md border border-[#c5a059]/35 bg-[#fcfaf7] px-3 py-2 text-sm text-navy outline-none focus:border-navy"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-navy">
-                MOQ (Pieces) — Optional
-              </label>
-
-              <input
-                name="moq"
-                type="number"
-                min="1"
-                placeholder="Optional"
-                value={form.moq}
-                onChange={handleChange}
-                disabled={busy}
-                className="mt-1 w-full rounded-md border border-[#c5a059]/35 bg-[#fcfaf7] px-3 py-2 text-sm text-navy outline-none focus:border-navy"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-semibold text-navy">
-                Rate per Piece (₹) — Optional
-              </label>
-
-              <input
-                name="pricePerUnit"
-                type="number"
-                min="1"
-                step="0.01"
-                placeholder="Optional"
-                value={form.pricePerUnit}
-                onChange={handleChange}
-                disabled={busy}
-                className="mt-1 w-full rounded-md border border-[#c5a059]/35 bg-[#fcfaf7] px-3 py-2 text-sm text-navy outline-none focus:border-navy"
-              />
+              >
+                {FIT_OPTIONS.map((fit) => (
+                  <option key={fit} value={fit}>
+                    {fit}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
@@ -1973,7 +2124,7 @@ export default function AdminProducts({
               />
             </div>
 
-            <div className="sm:col-span-2">
+            <div>
               <label className="block text-xs font-semibold text-navy">
                 Image 2 — Hover View (Changes on Hover)
               </label>
@@ -1981,9 +2132,7 @@ export default function AdminProducts({
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) =>
-                  readImageField(e, 'secondaryImageUrl')
-                }
+                onChange={(e) => readImageField(e, 'secondaryImageUrl')}
                 disabled={busy}
                 className="mt-1 w-full rounded-md border border-[#c5a059]/35 bg-[#fcfaf7] px-2.5 py-1.5 text-xs text-navy file:mr-3 file:rounded file:border-0 file:bg-navy file:px-3 file:py-1 file:text-xs file:font-semibold file:text-[#f8f4ee]"
               />
@@ -2162,9 +2311,7 @@ export default function AdminProducts({
                           }`}
                         >
                           <span className="truncate">
-                            {collapsed
-                              ? item.label.slice(0, 2)
-                              : item.label}
+                            {collapsed ? item.label.slice(0, 2) : item.label}
                           </span>
 
                           {!collapsed && item.badge && (
@@ -2188,9 +2335,7 @@ export default function AdminProducts({
             onClick={() => setCollapsed((c) => !c)}
             className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-xs text-slate-400 hover:bg-white/5 hover:text-[#f8f4ee]"
           >
-            <span>
-              {collapsed ? '→ Expand' : '‹ Collapse'}
-            </span>
+            <span>{collapsed ? '→ Expand' : '‹ Collapse'}</span>
           </button>
 
           <button
@@ -2200,11 +2345,7 @@ export default function AdminProducts({
             className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-xs font-medium text-rose-400 hover:bg-rose-500/10 disabled:opacity-50"
           >
             <span>
-              {collapsed
-                ? 'Out'
-                : busy
-                  ? 'Signing out…'
-                  : 'Logout'}
+              {collapsed ? 'Out' : busy ? 'Signing out…' : 'Logout'}
             </span>
           </button>
         </div>
@@ -2214,15 +2355,10 @@ export default function AdminProducts({
         <header className="flex flex-wrap items-center justify-between gap-4 border-b border-[#c5a059]/25 bg-white px-6 py-3">
           <div>
             <p className="text-[11px] text-muted">
-              Admin ›{' '}
-              <span className="text-navy">
-                {activeTabLabel}
-              </span>
+              Admin › <span className="text-navy">{activeTabLabel}</span>
             </p>
 
-            <h1 className="text-lg font-bold text-navy">
-              {activeTabLabel}
-            </h1>
+            <h1 className="text-lg font-bold text-navy">{activeTabLabel}</h1>
           </div>
 
           <div className="flex items-center gap-4">
@@ -2246,17 +2382,13 @@ export default function AdminProducts({
                 <p className="text-xs font-semibold text-navy">
                   {profileName}
                 </p>
-                <p className="text-[11px] text-muted">
-                  Admin
-                </p>
+                <p className="text-[11px] text-muted">Admin</p>
               </div>
             </div>
           </div>
         </header>
 
-        <main className="flex-1 p-6">
-          {inventoryContent}
-        </main>
+        <main className="flex-1 p-6">{inventoryContent}</main>
       </div>
 
       {modalNode}

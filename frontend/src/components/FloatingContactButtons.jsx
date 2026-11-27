@@ -112,7 +112,7 @@ export default function FloatingContactButtons() {
           <a
             href={telHref}
             aria-label="Call LOMEKA"
-            className="flex h-12 items-center justify-center border-r border-[#e5e7eb] text-[#e6a428] transition-colors active:bg-[#fdfaf5]"
+            className="flex h-12 items-center justify-center border-r border-[#e5e7eb] text-[#604a85] transition-colors active:bg-[#fdfaf5]"
           >
             <PhoneSolidIcon size={20} />
           </a>
@@ -168,7 +168,7 @@ export default function FloatingContactButtons() {
             href={telHref}
             aria-label="Call LOMEKA"
             title="Call us"
-            className="group relative flex size-13 items-center justify-center rounded-full bg-[#e6a428] text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#d39218] hover:shadow-xl"
+            className="group relative flex size-13 items-center justify-center rounded-full bg-[#8886b5] text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#d39218] hover:shadow-xl"
           >
             <PhoneSolidIcon size={20} />
             <span className="pointer-events-none right-full mr-2.5 hidden whitespace-nowrap rounded-lg border border-[#e6a428]/35 bg-white px-2.5 py-1 text-xs font-semibold text-[#18432f] shadow-md group-hover:block">
@@ -194,7 +194,7 @@ export default function FloatingContactButtons() {
             rel="noopener noreferrer"
             aria-label="Chat on WhatsApp"
             title="Chat on WhatsApp"
-            className="group relative flex size-13 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#1ebe5d] hover:shadow-xl"
+            className="group relative flex size-13 items-center justify-center rounded-full bg-[#84e292] text-white shadow-lg transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#1ebe5d] hover:shadow-xl"
           >
             <WhatsAppSolidIcon size={22} />
             <span className="pointer-events-none right-full mr-2.5 hidden whitespace-nowrap rounded-lg border border-[#25D366]/30 bg-white px-2.5 py-1 text-xs font-semibold text-[#128C7E] shadow-md group-hover:block">
