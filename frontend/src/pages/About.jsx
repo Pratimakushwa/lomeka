@@ -639,139 +639,208 @@ export default function About() {
         </div>
       </section>
       {/* What we manufacture */}
-      <section
-        aria-labelledby="apparel-heading"
-        className="border-y border-gold/25 bg-white px-4 py-8 sm:px-8 sm:py-12"
+      
+    <section
+  aria-labelledby="apparel-heading"
+  className="border-y border-[#9b6bc7]/25 bg-white px-4 py-7 sm:px-8 sm:py-14"
+>
+  <div className="mx-auto max-w-7xl">
+    {/* Mobile: stacked upar-neeche | Desktop (lg+): side-by-side */}
+    <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-[minmax(0,42fr)_minmax(0,58fr)] lg:items-stretch lg:gap-10">
+      {/* Image Showcase: balanced proportion on mobile, full height on desktop */}
+      <div
+        data-reveal
+        className="relative overflow-hidden rounded-xl border border-[#9b6bc7]/20 bg-[#f5effb] shadow-xs sm:rounded-2xl"
       >
-        <div className="mx-auto max-w-7xl">
-          <div
-            data-reveal
-            className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between"
-          >
-            <div className="max-w-2xl">
-              <p className="text-[11px] font-bold tracking-[0.18em] text-gold uppercase">
-                Product range
-              </p>
+        <div className="aspect-[4/3] w-full sm:aspect-[16/10] lg:aspect-auto lg:h-full lg:min-h-[420px]">
+          <img
+            src="/img11.png"
+            alt="LOMEKA wholesale men's and women's apparel range"
+            loading="lazy"
+            decoding="async"
+            className="h-full w-full object-cover object-center transition-transform duration-700 hover:scale-[1.03]"
+          />
+        </div>
 
-              <h2
-                id="apparel-heading"
-                className="mt-1.5 font-display text-2xl text-navy sm:mt-2 sm:text-4xl"
-              >
-                What we manufacture
-              </h2>
+        <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-[#1f0d36]/90 via-[#1f0d36]/45 to-transparent px-3.5 py-2.5 sm:px-5 sm:py-4">
+          <span className="rounded-full bg-[#9b6bc7]/90 px-2.5 py-0.5 text-[9px] font-bold tracking-[0.14em] text-white uppercase sm:text-[10px]">
+            Bulk & Custom
+          </span>
+          <p className="font-display text-xs text-white sm:text-base">
+            Bhopal · India · Dubai
+          </p>
+        </div>
+      </div>
 
-              <p className="mt-2 text-xs leading-relaxed text-muted sm:mt-3 sm:text-base">
-                Complete men’s and women’s everyday, winter and active
-                apparel for Bhopal, India and Dubai buyers — including custom
-                orders made to your specifications.
-              </p>
-            </div>
+      {/* Content & Compact Cards */}
+      <div className="flex min-w-0 flex-col justify-between">
+        <div data-reveal>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-[10px] font-bold tracking-[0.18em] text-[#9b6bc7] uppercase sm:text-[11px]">
+              Product range
+            </p>
 
-            <div className="flex flex-wrap gap-4">
+            <div className="flex items-center gap-3 sm:gap-4">
               <Link
                 to="/collections?gender=men"
-                className="text-xs font-semibold underline decoration-gold underline-offset-4 sm:text-sm"
+                className="text-xs font-semibold text-[#3b185f] underline decoration-[#9b6bc7] underline-offset-4 transition-colors hover:text-[#9b6bc7] sm:text-sm"
               >
                 Men’s Wear →
               </Link>
 
               <Link
                 to="/collections?gender=women"
-                className="text-xs font-semibold underline decoration-gold underline-offset-4 sm:text-sm"
+                className="text-xs font-semibold text-[#3b185f] underline decoration-[#9b6bc7] underline-offset-4 transition-colors hover:text-[#9b6bc7] sm:text-sm"
               >
                 Women’s Wear →
               </Link>
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-4 lg:grid-cols-3">
-            {manufacturingCategories.map(
-              ({ title, tag, description }, index) => (
-                <article
-                  key={title}
-                  data-reveal
-                  className="brand-card brand-card-hover group relative min-w-0 overflow-hidden p-3.5 sm:p-6"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="font-display text-2xl leading-none text-gold/35 transition-colors group-hover:text-gold/60 sm:text-3xl">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-
-                    <span className="rounded-sm bg-surface-alt px-2 py-0.5 text-[9px] font-bold tracking-[0.12em] text-muted uppercase sm:px-2.5 sm:py-1 sm:text-[10px] sm:tracking-[0.14em]">
-                      {tag}
-                    </span>
-                  </div>
-
-                  <h3 className="mt-3 font-display text-base leading-snug text-navy sm:mt-4 sm:text-2xl">
-                    {title}
-                  </h3>
-
-                  <p className="mt-1.5 text-xs leading-relaxed text-muted sm:mt-2 sm:text-sm">
-                    {description}
-                  </p>
-                </article>
-              ),
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Why partner */}
-      <section
-        aria-labelledby="partner-heading"
-        className="px-4 py-8 sm:px-8 sm:py-12"
-      >
-        <div className="mx-auto max-w-7xl">
-          <div
-            data-reveal
-            className="mx-auto max-w-2xl text-center"
+          <h2
+            id="apparel-heading"
+            className="mt-1.5 font-display text-2xl leading-tight text-[#24103a] sm:text-3xl lg:text-4xl"
           >
-            <p className="text-[11px] font-bold tracking-[0.18em] text-gold uppercase">
-              Why partner with LOMEKA
-            </p>
+            What we manufacture
+          </h2>
 
-            <h2
-              id="partner-heading"
-              className="mt-1.5 font-display text-2xl text-navy sm:mt-2 sm:text-4xl"
+          <p className="mt-1.5 text-xs leading-relaxed text-[#5e4d72] sm:mt-2 sm:text-sm">
+            Complete men’s and women’s everyday, winter and active apparel for
+            Bhopal, India and Dubai buyers — including custom orders made to
+            your specifications.
+          </p>
+        </div>
+
+        {/* Compact 2-column grid on mobile (4 items) & full list on desktop */}
+        <div className="mt-3.5 grid grid-cols-2 gap-2.5 sm:mt-5 sm:gap-3.5">
+          {manufacturingCategories.map(({ title, tag, description }, index) => (
+            <article
+              key={title}
+              data-reveal
+              className={`${index >= 4 ? 'hidden sm:block' : ''} group min-w-0 rounded-xl border border-[#9b6bc7]/20 bg-[#fcfaff] p-3 transition-all duration-300 hover:border-[#9b6bc7]/55 hover:bg-white hover:shadow-xs sm:p-4`}
             >
-              Built for serious wholesale relationships
-            </h2>
-
-            <p className="mt-2 text-xs leading-relaxed text-muted sm:mt-3 sm:text-base">
-              Clear pricing, careful quality checks and practical support
-              for custom branding across Bhopal, India and Dubai.
-            </p>
-          </div>
-
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:mt-8 sm:gap-4">
-            {partnerBenefits.map(({ Icon, title, description }) => (
-              <article
-                key={title}
-                data-reveal
-                className="brand-card flex min-w-0 flex-col gap-2.5 p-3.5 sm:flex-row sm:gap-5 sm:p-6"
-              >
-                <span className="grid size-9 shrink-0 place-items-center rounded-full border border-gold/40 bg-gold/10 text-navy sm:size-11">
-                  <Icon
-                    size={16}
-                    strokeWidth={1.7}
-                    aria-hidden="true"
-                  />
+              <div className="flex items-center justify-between gap-1.5">
+                <span className="font-display text-sm leading-none font-semibold text-[#9b6bc7] sm:text-lg">
+                  {String(index + 1).padStart(2, '0')}
                 </span>
 
-                <div className="min-w-0">
-                  <h3 className="font-display text-base leading-snug text-navy sm:text-2xl">
-                    {title}
-                  </h3>
+                <span className="truncate rounded-sm bg-[#f2e8fc] px-1.5 py-0.5 text-[8px] font-bold tracking-[0.1em] text-[#5c2d91] uppercase sm:px-2 sm:text-[10px] sm:tracking-[0.14em]">
+                  {tag}
+                </span>
+              </div>
 
-                  <p className="mt-1 text-xs leading-relaxed text-muted sm:mt-1.5 sm:text-sm">
-                    {description}
-                  </p>
-                </div>
-              </article>
-            ))}
+              <h3 className="mt-1.5 font-display text-sm leading-snug text-[#24103a] sm:mt-2 sm:text-lg">
+                {title}
+              </h3>
+
+              <p className="mt-1 line-clamp-2 text-[11px] leading-relaxed text-[#675878] sm:line-clamp-none sm:text-xs">
+                {description}
+              </p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+      {/* Why partner */}
+<section
+  aria-labelledby="partner-heading"
+  className="bg-[#faf7fd] px-4 py-8 sm:px-8 sm:py-14"
+>
+  <div className="mx-auto max-w-7xl">
+    <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-[minmax(0,38fr)_minmax(0,62fr)] lg:items-stretch lg:gap-7">
+      {/* Left Anchor Card: Dark Plum Editorial Panel */}
+      <div
+        data-reveal
+        className="relative flex flex-col justify-between overflow-hidden rounded-2xl bg-gradient-to-br from-[#26103f] via-[#1d0b33] to-[#140724] p-5 text-white shadow-sm sm:p-8"
+      >
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-12 -bottom-12 h-44 w-44 rounded-full bg-[#9b6bc7]/25 blur-2xl"
+        />
+
+        <div>
+          <span className="inline-flex items-center gap-2 rounded-full border border-[#d5b4f7]/30 bg-white/[0.06] px-3 py-1 text-[10px] font-bold tracking-[0.18em] text-[#e2cdf8] uppercase">
+            <span className="h-1.5 w-1.5 rounded-full bg-[#c99df2]" />
+            Why partner with LOMEKA
+          </span>
+
+          <h2
+            id="partner-heading"
+            className="mt-3 font-display text-2xl leading-[1.12] text-white sm:text-4xl"
+          >
+            Built for serious wholesale relationships
+          </h2>
+
+          <p className="mt-2.5 text-xs leading-relaxed text-[#dfd3ec] sm:mt-3 sm:text-sm">
+            Clear pricing, careful quality checks and practical support for
+            custom branding across Bhopal, India and Dubai.
+          </p>
+        </div>
+
+        <div className="mt-5 grid grid-cols-3 gap-2 border-t border-white/12 pt-4 sm:mt-8 sm:gap-3 sm:pt-5">
+          <div>
+            <p className="font-display text-base text-[#e3c8fc] sm:text-xl">
+              Direct
+            </p>
+            <p className="text-[10px] tracking-wide text-white/70 uppercase">
+              Bhopal Unit
+            </p>
+          </div>
+          <div>
+            <p className="font-display text-base text-[#e3c8fc] sm:text-xl">
+              100% QC
+            </p>
+            <p className="text-[10px] tracking-wide text-white/70 uppercase">
+              Batch Check
+            </p>
+          </div>
+          <div>
+            <p className="font-display text-base text-[#e3c8fc] sm:text-xl">
+              Pan-India
+            </p>
+            <p className="text-[10px] tracking-wide text-white/70 uppercase">
+              & Dubai
+            </p>
           </div>
         </div>
-      </section>
+      </div>
+
+      {/* Right 2x2 Benefit Grid (Compact on mobile & desktop) */}
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-4">
+        {partnerBenefits.map(({ Icon, title, description }, index) => (
+          <article
+            key={title}
+            data-reveal
+            className="group relative flex min-w-0 flex-col justify-between rounded-2xl border border-[#9b6bc7]/20 bg-white p-3.5 shadow-2xs transition-all duration-300 hover:-translate-y-0.5 hover:border-[#9b6bc7]/55 hover:shadow-md sm:p-6"
+          >
+            <div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="grid size-8 shrink-0 place-items-center rounded-xl border border-[#9b6bc7]/30 bg-[#f5effb] text-[#3b185f] transition-colors group-hover:bg-[#9b6bc7] group-hover:text-white sm:size-10">
+                  <Icon size={16} strokeWidth={1.8} aria-hidden="true" />
+                </span>
+
+                <span className="font-display text-xs font-semibold text-[#9b6bc7]/60 sm:text-sm">
+                  0{index + 1}
+                </span>
+              </div>
+
+              <h3 className="mt-2.5 font-display text-sm leading-snug text-[#24103a] sm:mt-4 sm:text-xl">
+                {title}
+              </h3>
+
+              <p className="mt-1 text-[11px] leading-relaxed text-[#675878] sm:mt-1.5 sm:text-sm">
+                {description}
+              </p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
 
      
 
@@ -780,15 +849,15 @@ export default function About() {
         aria-labelledby="who-heading"
         className="px-4 py-8 sm:px-8 sm:py-12"
       >
-        <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-7 lg:grid-cols-12 lg:gap-12">
+        <div className="mx-auto grid max-w-8xl grid-cols-1 items-center gap-7 lg:grid-cols-12 lg:gap-12">
           <div
             data-reveal
-            className="grid min-w-0 grid-cols-2 gap-2.5 sm:gap-3 lg:col-span-5"
+            className="grid min-w-0  gap-2.5 sm:gap-3 lg:col-span-5"
           >
             <figure className="col-span-2 overflow-hidden rounded-[var(--radius-card)] bg-surface-alt">
               <div className="aspect-[16/10] overflow-hidden">
                 <img
-                  src="/hero-closeup.png"
+                  src="/brand-chapter.jpg"
                   alt="Models in LOMEKA forest-green and burgundy apparel"
                   loading="lazy"
                   decoding="async"
@@ -797,29 +866,6 @@ export default function About() {
               </div>
             </figure>
 
-            <figure className="overflow-hidden rounded-[var(--radius-card)] bg-surface-alt">
-              <div className="aspect-[4/5] overflow-hidden">
-                <img
-                  src="/img5.png"
-                  alt="LOMEKA men’s apparel style"
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover object-top"
-                />
-              </div>
-            </figure>
-
-            <figure className="overflow-hidden rounded-[var(--radius-card)] bg-surface-alt">
-              <div className="aspect-[4/5] overflow-hidden">
-                <img
-                  src="/img2.png"
-                  alt="LOMEKA women’s apparel style"
-                  loading="lazy"
-                  decoding="async"
-                  className="h-full w-full object-cover object-top"
-                />
-              </div>
-            </figure>
           </div>
 
           <div data-reveal className="min-w-0 lg:col-span-7">

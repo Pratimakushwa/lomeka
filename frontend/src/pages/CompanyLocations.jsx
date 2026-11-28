@@ -10,8 +10,8 @@ const COMPANY_LOCATIONS = [
     landmark: 'Next to Aasa Proteins',
     concernPerson: 'Ms Neetu',
     business: 'MNF – Manufacturing Unit of Garments',
-    query:
-      'Shop No. 2, C-385, Udayanchal Nagar, Near Amarnath Temple, Kolar Road, Bhopal, Madhya Pradesh 462042, India',
+    latitude: 23.185831,
+    longitude: 77.409462,
   },
 ];
 
@@ -26,13 +26,9 @@ export default function CompanyLocations({
     COMPANY_LOCATIONS.find((item) => item.id === selectedId) ||
     COMPANY_LOCATIONS[0];
 
-  const embedSrc = `https://www.google.com/maps?q=${encodeURIComponent(
-    current.query,
-  )}&output=embed`;
+  const embedSrc = `https://www.google.com/maps?q=${current.latitude},${current.longitude}&output=embed`;
 
-  const mapsLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    current.query,
-  )}`;
+  const mapsLink = `https://www.google.com/maps/search/?api=1&query=${current.latitude},${current.longitude}`;
 
   return (
     <section

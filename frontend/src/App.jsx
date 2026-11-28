@@ -134,6 +134,7 @@ import About from './pages/About.jsx';
 import Collections from './pages/Collections.jsx';
 import Contact from './pages/Contact.jsx';
 import ManufacturingWholesale from './pages/ManufacturingWholesale.jsx';
+import Locations from './pages/Locations';
 
 const pageMeta = {
   '/': {
@@ -258,6 +259,8 @@ export default function App() {
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/locations" element={<Locations />} />
+<Route path="/Locations" element={<Locations />} />
           <Route path="/collections" element={<Collections />} />
           <Route
             path="/manufacturing-wholesale"
